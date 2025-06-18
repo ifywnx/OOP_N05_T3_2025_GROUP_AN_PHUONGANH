@@ -12,11 +12,12 @@ GiaoDich (Khánh hàng mua bánh)
 
 NhanVien
 
-# Miêu tả đối tượng 
+# Miêu tả đối tượng
+
 SanPham:
-+ Masanpham
-+ Tensanpham
-+ Soluong
++ MaSanPham
++ TenSanPham
++ SoLuong
 + NhaSX
 + HanSudung
 + NguyenLieu
@@ -25,7 +26,18 @@ KhachHang:
 + MaKhachHang
 + DiaChi
 + SoDienThoai
-
+NhanVien:
++ MaNhanVien
++ TenNhanVien
++ DiaChi
++ SoDienThoai
++ GioiTinh
++ QueQuan
+GiaoDich:
++ MaGiaoDich
++ NgayGiaoDich
++ GioGiaoDich
++ TongTien
 
 
 # Thành viên:
