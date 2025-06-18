@@ -5,8 +5,14 @@
 # Đối tượng:
 
 KhachHang
+
 SanPham
+
 GiaoDich (Khánh hàng mua bánh)
+
+# Miêu tả đối tượng 
+
+
 
 # Thành viên:
 
