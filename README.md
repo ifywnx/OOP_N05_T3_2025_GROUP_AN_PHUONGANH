@@ -11,6 +11,18 @@ SanPham
 GiaoDich (Khánh hàng mua bánh)
 
 # Miêu tả đối tượng 
+SanPham:
++ Masanpham
++ Tensanpham
++ Soluong
++ NhaSX
++ HanSudung
++ NguyenLieu
+KhachHang:
++ TenKhachHang
++ MaKhachHang
++ DiaChi
++ SoDienThoai
 
 
 
