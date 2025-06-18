@@ -42,8 +42,8 @@ GiaoDich:
 
 # Thành viên:
 
-Nguyễn Văn An ( MÃ sinh viên: 24100254)
+Nguyễn Văn An ( MÃ sinh viên: 24100254 github: ifywnx)
 
-Lê Thị Phương Anh ( Mã sinh viên: 24100263)
+Lê Thị Phương Anh ( Mã sinh viên: 24100263 github: anhlephuong)
 
 Nguyễn Lệ Thu
