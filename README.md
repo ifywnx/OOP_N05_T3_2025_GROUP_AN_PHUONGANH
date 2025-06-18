@@ -10,6 +10,8 @@ SanPham
 
 GiaoDich (Khánh hàng mua bánh)
 
+NhanVien
+
 # Miêu tả đối tượng 
 SanPham:
 + Masanpham
