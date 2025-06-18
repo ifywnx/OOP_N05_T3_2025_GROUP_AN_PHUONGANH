@@ -18,7 +18,7 @@ SanPham:
 + MaSanPham
 + TenSanPham
 + SoLuong
-+ NhaSX
++ NhaSanXuat
 + HanSudung
 + NguyenLieu
 KhachHang:
@@ -46,4 +46,4 @@ Nguyễn Văn An ( MÃ sinh viên: 24100254 github: ifywnx)
 
 Lê Thị Phương Anh ( Mã sinh viên: 24100263 github: anhlephuong)
 
-Nguyễn Lệ Thu
+Nguyễn Lệ Thu (nglthu1979)
