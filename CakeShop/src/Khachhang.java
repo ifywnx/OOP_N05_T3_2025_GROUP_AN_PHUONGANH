@@ -9,8 +9,8 @@ public class Khachhang {
     // phuong thuc hoat dong - methods
     //shift-alt-F: định dang dữ liẹu 
 //CakeShop/src
-    public String setMaKhachHang(String ma){
-        MaKhachHang = ma;
+    public String setMaKhachHang(String mkh){
+        MaKhachHang = mkh;
 
         return MaKhachHang;
     }
@@ -24,8 +24,8 @@ public class Khachhang {
    public Khachhang(){
 
     }
-    public String setTenKhachHang(String name){
-        TenKhachHang = name;
+    public String setTenKhachHang(String tkh){
+        TenKhachHang = tkh;
 
         return TenKhachHang;
     }
@@ -34,8 +34,8 @@ public class Khachhang {
         System.out.println("Hien thi ten khach hang" + TenKhachHang);
     }
 
-    private String setDiaChi(String diachi){
-        DiaChi = diachi;
+    private String setDiaChi(String dc){
+        DiaChi = dc;
 
         return DiaChi;
     }
