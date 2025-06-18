@@ -19,4 +19,9 @@ public class Khachhang {
         System.out.println("Hien thi ma khach hang" + MaKhachHang);
     }
 
+    //Default constructor
+
+   public Khachhang(){
+
+    }
 }
