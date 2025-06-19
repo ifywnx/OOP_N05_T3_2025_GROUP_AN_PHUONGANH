@@ -42,5 +42,4 @@ public class Giaodich {
     public void getTongTien(){
         System.out.println("Tong tien" + TongTien);
     }
-    
 }
