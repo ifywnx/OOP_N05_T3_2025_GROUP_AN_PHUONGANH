@@ -1,4 +1,4 @@
-# OOP_N05_T3_2025_GROUP_AN_PHUONGANH
+String m# OOP_N05_T3_2025_GROUP_AN_PHUONGANH
 
 Ứng dụng quản lý tiệm bánh
 
@@ -35,7 +35,7 @@ NhanVien:
 + QueQuan
 GiaoDich:
 + MaGiaoDich
-+ NgayGiaoDich
++ NgaythangNamGiaoDich
 + GioGiaoDich
 + TongTien
 
