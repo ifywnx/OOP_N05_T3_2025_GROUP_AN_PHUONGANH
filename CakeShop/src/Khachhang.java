@@ -3,8 +3,8 @@ public class Khachhang {
     // Biến miêu tả - Member variable
     String MaKhachHang;
     String TenKhachHang;
-    String DiaChi;
-    String SoDienThoai;
+    Private String DiaChi;
+    Private String SoDienThoai;
 
     // phuong thuc hoat dong - methods
     //shift-alt-F: định dang dữ liẹu 
@@ -30,19 +30,21 @@ public class Khachhang {
         System.out.println("Hien thi ten khach hang" + TenKhachHang);
     }
 
-    private String setDiaChi(String dc){
+    public String setDiaChi(String dc){
         DiaChi = dc;
         return DiaChi;
     }
-    private void getDiaChi(){
-        System.out.println("Khong hien thi");
+
+    public void getDiaChi(){
+        System.out.println("Dia chi" + DiaChi);
     }
 
-    private String setSoDienThoai(String sdt){
+    public String setSoDienThoai(String sdt){
         SoDienThoai = sdt;
         return SoDienThoai;
     }
-    private void getSoDienThoai(){
-        System.out.println("Khong hien thi");
+
+    public void getSoDienThoai(){
+        System.out.println("So dien thoai" + SoDienThoai);
     }
 }
