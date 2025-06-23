@@ -11,10 +11,8 @@ public class Khachhang {
 //CakeShop/src
     public String setMaKhachHang(String mkh){
         MaKhachHang = mkh;
-
         return MaKhachHang;
     }
-
     public void getMaKhachHang(){
         System.out.println("Hien thi ma khach hang" + MaKhachHang);
     }
@@ -26,30 +24,25 @@ public class Khachhang {
     }
     public String setTenKhachHang(String tkh){
         TenKhachHang = tkh;
-
         return TenKhachHang;
     }
-
     public void getTenKhachHang(){
         System.out.println("Hien thi ten khach hang" + TenKhachHang);
     }
 
     private String setDiaChi(String dc){
         DiaChi = dc;
-
         return DiaChi;
     }
     private void getDiaChi(){
-        System.out.println("An dia chi" + DiaChi);
+        System.out.println("Dia chi" + DiaChi);
     }
 
     private String setSoDienThoai(String sdt){
         SoDienThoai = sdt;
-
         return SoDienThoai;
     }
-
     private void getSoDienThoai(){
-        System.out.println("An so dien thoai" + SoDienThoai);
+        System.out.println("So dien thoai" + SoDienThoai);
     }
 }

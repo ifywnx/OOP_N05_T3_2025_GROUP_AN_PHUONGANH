@@ -7,7 +7,7 @@ public class Sanpham {
    String NhaSanXuat;
    int HanSudung;
    String NguyenLieu;
-
+//contructor
    public sanPham(){
 
    }
