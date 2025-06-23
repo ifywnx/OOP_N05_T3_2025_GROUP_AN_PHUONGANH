@@ -58,3 +58,4 @@ public class Sanpham {
    public void getNguyenLieu(){
     System.out.println("Hien thi nguyen lieu" + NguyenLieu);
    }
+}

@@ -35,7 +35,7 @@ public class Khachhang {
         return DiaChi;
     }
     private void getDiaChi(){
-        System.out.println("Dia chi" + DiaChi);
+        System.out.println("Khong hien thi");
     }
 
     private String setSoDienThoai(String sdt){
@@ -43,6 +43,6 @@ public class Khachhang {
         return SoDienThoai;
     }
     private void getSoDienThoai(){
-        System.out.println("So dien thoai" + SoDienThoai);
+        System.out.println("Khong hien thi");
     }
 }
