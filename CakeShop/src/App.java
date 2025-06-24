@@ -4,6 +4,8 @@ public class App {
 
         TestKhachhang  tkh = new TestKhachhang();
         tkh.test();
-       
+
+        TestNumber tn = new TestNumber();
+        tn.test();
     }
 }

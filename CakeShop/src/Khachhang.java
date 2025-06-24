@@ -19,7 +19,7 @@ public class Khachhang {
 
     //Default constructor
 
-   public Khachhang(){
+    public Khachhang(){
 
     }
     public String setTenKhachHang(String tkh){
@@ -34,8 +34,7 @@ public class Khachhang {
         DiaChi = dc;
         return DiaChi;
     }
-
-    public void getDiaChi(){
+    private void getDiaChi(){
         System.out.println("Dia chi" + DiaChi);
     }
 
@@ -44,7 +43,7 @@ public class Khachhang {
         return SoDienThoai;
     }
 
-    public void getSoDienThoai(){
+    private void getSoDienThoai(){
         System.out.println("So dien thoai" + SoDienThoai);
     }
 }

@@ -7,7 +7,6 @@ public class Giaodich {
     double TongTien;
     //contructor
     public Giaodich(){
-
     }
 
     //phuong thuc hoat dong
