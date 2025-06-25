@@ -48,7 +48,7 @@ public class Nhanvien {
 
     }
     public void getSoDienThoai(){
-        System.out.println("So dien thoai" + SoDienThoai);
+        System.out.println("So dien thoai: " + SoDienThoai);
 
     }
 
