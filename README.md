@@ -86,4 +86,4 @@ Nhân Viên:
 C3, C4, C5:
 Link git repo của nhóm: github.com/ifywnx/OOP_N05_T3_2025_GROUP_AN_PHUONGANH
 
-Link ReadMe.md của nhóm: https://github.com/ifywnx/OOP_N05_T3_2025_GROUP_AN_PHUONGANH/edit/main/README.md
+Link ReadMe.md của nhóm: github.com/ifywnx/OOP_N05_T3_2025_GROUP_AN_PHUONGANH/blob/main/README.md
