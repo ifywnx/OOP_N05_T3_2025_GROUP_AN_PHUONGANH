@@ -8,10 +8,10 @@ public class App {
         TestNumber tn = new TestNumber();
         tn.test();
 
-        TestObject oj = new TestObject();
-        oj.test();
+        TestObject to = new TestObject();
+        to.test();
 
-        TestBreakAndContinue bac = new TestBreakAndContinue();
-        bac.test();
+        TestBreakAndContinue tbac = new TestBreakAndContinue();
+        tbac.test();
     }
 }
