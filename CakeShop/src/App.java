@@ -7,5 +7,11 @@ public class App {
 
         TestNumber tn = new TestNumber();
         tn.test();
+
+        TestObject oj = new TestObject();
+        oj.test();
+
+        TestBreakAndContinue bac = new TestBreakAndContinue();
+        bac.test();
     }
 }
