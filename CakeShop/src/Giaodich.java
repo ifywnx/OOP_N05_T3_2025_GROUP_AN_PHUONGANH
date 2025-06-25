@@ -15,7 +15,7 @@ public class Giaodich {
         return MaGiaoDich;
     }
     public void getMaGiaoDich(){
-        System.out.println("Ma giao dich" + MaGiaoDich);
+        System.out.println("Hien thi Ma giao dich: " + MaGiaoDich);
     }
 
     public String setNgayThangNamGiaoDich(String ntngd){
@@ -23,7 +23,7 @@ public class Giaodich {
         return NgayThangNamGiaoDich;
     }
     public void getNgayThangNamGiaoDich(){
-        System.out.println("Ngay thang nam giao dich" + NgayThangNamGiaoDich);
+        System.out.println("Ngay thang nam giao dich: " + NgayThangNamGiaoDich);
     }
 
     public String setGioGiaoDich(String ggd){
@@ -31,7 +31,7 @@ public class Giaodich {
         return GioGiaoDich;
     }
     public void getGioGiaoDich(){
-        System.out.println("Gio giao dich" + GioGiaoDich);
+        System.out.println("Gio giao dich: " + GioGiaoDich);
     }
 
     public double setTongTien(double tt){
@@ -39,6 +39,6 @@ public class Giaodich {
         return TongTien;
     }
     public void getTongTien(){
-        System.out.println("Tong tien" + TongTien);
+        System.out.println("Tong tien: " + TongTien);
     }
 }

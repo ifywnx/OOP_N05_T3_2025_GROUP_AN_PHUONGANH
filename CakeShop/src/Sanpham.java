@@ -1,14 +1,14 @@
 public class Sanpham {
 
     // Biến miêu tả - Member variable
-   String MaSanPham;
+   private String MaSanPham;
    String TenSanPham;
    int SoLuong;
    String NhaSanXuat;
-   int HanSudung;
+   String HanSuDung;
    String NguyenLieu;
 //contructor
-   public sanPham(){
+   public Sanpham(){
 
    }
    public String setMaSanPham(String msp){
@@ -16,7 +16,7 @@ public class Sanpham {
     return MaSanPham;
    }
    public void getMaSanPham(){
-    System.out.println("Hien thi ma san pham" + MaSanPham);
+    System.out.println("Hien thi ma san pham: " + MaSanPham);
    }
 
    public String setTenSanPham(String tsp){
@@ -24,7 +24,7 @@ public class Sanpham {
     return TenSanPham;
    }
    public void getTenSanPham(){
-    System.out.println("Hien thi ten san pham" + TenSanPham);
+    System.out.println("Hien thi ten san pham: " + TenSanPham);
    }
 
    public int setSoLuong(int sl){
@@ -32,7 +32,7 @@ public class Sanpham {
     return SoLuong;
    }
    public void getSoLuong(){
-    System.out.println("Hien thi so luong" + SoLuong);
+    System.out.println("Hien thi so luong: " + SoLuong);
    }
 
    public String setNhaSanXuat(String nsx){
@@ -40,15 +40,15 @@ public class Sanpham {
     return NhaSanXuat;
    }
    public void getNhaSanXuat(){
-    System.out.println("Hien thi nha san xuat" + NhaSanXuat);
+    System.out.println("Hien thi nha san xuat: " + NhaSanXuat);
    }
 
-   public int setHanSuDung(int hsd){
+   public String setHanSuDung(String hsd){
     HanSuDung = hsd;
     return HanSuDung;
    }
    public void getHanSuDung(){
-    System.out.println("Hien thi han su dung" + HanSuDung);
+    System.out.println("Hien thi han su dung: " + HanSuDung);
    }
 
    public String setNguyenLieu(String nl){
@@ -56,6 +56,6 @@ public class Sanpham {
     return NguyenLieu;
    }
    public void getNguyenLieu(){
-    System.out.println("Hien thi nguyen lieu" + NguyenLieu);
+    System.out.println("Hien thi nguyen lieu: " + NguyenLieu);
    }
 }

@@ -1,10 +1,10 @@
 public class Nhanvien {
     // Biến miêu tả - Member variable
-    String MaNhanVien;
-    String TenNhanVien;
-    String DiaChi;
-    String SoDienThoai;
-    String TienLuong;
+    private String MaNhanVien;
+    private String TenNhanVien;
+    private String DiaChi;
+    private String SoDienThoai;
+    private String TienLuong;
 
     //contructor
     public Nhanvien(){
@@ -18,7 +18,7 @@ public class Nhanvien {
 
     }
     public void getMaNhanVien(){
-        System.out.println("Hien thi ma nhan vien" + MaNhanVien);
+        System.out.println("Hien thi ma nhan vien: " + MaNhanVien);
 
     }
 
@@ -28,27 +28,27 @@ public class Nhanvien {
 
     }
     public void getTenNhanVien(){
-        System.out.println("Hien thi ten nhan vien" + TenNhanVien);
+        System.out.println("Hien thi ten nhan vien: " + TenNhanVien);
 
     }
 
-    private String setDiaChi(String dc){
+    public String setDiaChi(String dc){
         DiaChi = dc;
         return DiaChi;
 
     }
-    private void getDiaChi(){
-        System.out.println("Khong tiet lo");
+    public void getDiaChi(){
+        System.out.println("DiaChi: " + DiaChi);
 
     }
 
-    private String setSoDienThoai(String sdt){
+    public String setSoDienThoai(String sdt){
         SoDienThoai = sdt;
         return SoDienThoai;
 
     }
-    private void getSoDienThoai(){
-        System.out.println("Khong tiet lo");
+    public void getSoDienThoai(){
+        System.out.println("So dien thoai" + SoDienThoai);
 
     }
 
@@ -58,6 +58,6 @@ public class Nhanvien {
 
     }
     public void getTienLuong(){
-        System.out.println("Hien thi tien luong" + TienLuong);
+        System.out.println("Hien thi tien luong: " + TienLuong);
     }
 }

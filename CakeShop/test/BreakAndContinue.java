@@ -1,5 +1,5 @@
 public class BreakAndContinue {
-    public static void main(String[] args) {
+    public static void test() {
         for (int i = 0; i < 100; i++) {
 
             if (i == 74) break;
