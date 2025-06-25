@@ -31,8 +31,7 @@ NhanVien:
 + TenNhanVien
 + DiaChi
 + SoDienThoai
-+ GioiTinh
-+ QueQuan
++ TienLuong
 GiaoDich:
 + MaGiaoDich
 + NgaythangNamGiaoDich
