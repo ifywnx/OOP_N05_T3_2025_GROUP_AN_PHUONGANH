@@ -1,7 +1,7 @@
 
 public class TestKhachhang{
 
-    public static void main(String[] args){
+    public static void test(){
 
         Khachhang trang = new Khachhang();
         trang.setMaKhachHang("KH02");
