@@ -6,6 +6,11 @@ public class Nhanvien {
     String SoDienThoai;
     String TienLuong;
 
+    //contructor
+    public Nhanvien(){
+        
+    }
+
     // Methods
     public String setMaNhanVien(String mnv){
         MaNhanVien = mnv;
