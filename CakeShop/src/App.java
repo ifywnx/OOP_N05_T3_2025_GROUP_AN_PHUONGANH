@@ -7,5 +7,6 @@ public class App {
         TestNhanvien.test();
         TestBook.test();
         TestLeaf.test();
+        TestFlower.test();
     }
 }
