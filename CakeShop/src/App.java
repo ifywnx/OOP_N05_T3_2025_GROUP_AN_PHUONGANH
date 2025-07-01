@@ -5,5 +5,6 @@ public class App {
         TestSanpham.test();
         TestGiaodich.test();
         TestNhanvien.test();
+        TestBook.test();
     }
 }
