@@ -12,5 +12,13 @@ public class TestNhanvien {
         nv.getDiaChi();
         nv.getSoDienThoai();
         nv.getTienLuong();
+        //Update
+        nv.setTienLuong("20000000");
+        System.out.println("Cap nhat Tien luong moi:");
+        nv.getTienLuong();
+        //Delete
+        nv = null;
+        System.out.println("Xoa nhan vien:");
+
     }
 }
