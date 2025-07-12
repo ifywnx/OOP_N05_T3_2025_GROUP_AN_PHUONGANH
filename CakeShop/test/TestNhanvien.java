@@ -6,7 +6,7 @@ public class TestNhanvien {
         nv.setTenNhanVien("Lê Thị Phương Anh");
         nv.setDiaChi("Hải Dương");
         nv.setSoDienThoai("0546989833");
-        nv.setTienLuong("15.000.000 VNĐ");
+        nv.setTienLuong("15000000 VNĐ");
         nv.getMaNhanVien();
         nv.getTenNhanVien();
         nv.getDiaChi();
