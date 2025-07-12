@@ -10,5 +10,11 @@ public class TestGiaodich {
         gd.getNgayThangNamGiaoDich();
         gd.getGioGiaoDich();
         gd.getTongTien();
+        gd.setTongTien(2500000.0);
+        System.out.println("Cap nhat tong tien:");
+        gd.getTongTien();
+        gd = null;
+        System.out.println("Xoa giao dich:");
+
     }
 }
