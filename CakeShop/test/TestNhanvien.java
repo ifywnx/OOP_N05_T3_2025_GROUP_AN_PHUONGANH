@@ -2,6 +2,7 @@ public class TestNhanvien {
 
     public static void test() {
         Nhanvien nv = new Nhanvien();
+        System.out.println("Create and Read");
         nv.setMaNhanVien("NV01");
         nv.setTenNhanVien("Lê Thị Phương Anh");
         nv.setDiaChi("Hải Dương");
@@ -13,10 +14,12 @@ public class TestNhanvien {
         nv.getSoDienThoai();
         nv.getTienLuong();
         //Update
+        System.out.println("Update");
         nv.setTienLuong("20000000");
         System.out.println("Cap nhat Tien luong moi:");
         nv.getTienLuong();
         //Delete
+        System.out.println("Delete");
         nv = null;
         System.out.println("Xoa nhan vien:");
 
