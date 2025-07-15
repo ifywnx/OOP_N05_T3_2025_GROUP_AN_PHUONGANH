@@ -1,11 +1,11 @@
-import Book;
+import java.util.List;
 public class Library {
-private final List<Book> books;
-public Library() { }
-Library(List<Book> b){
-this.books = b;
-}
-//get book
-public List<Book> getList(){
-return books;}
+    private List<Book> books;
+
+    public Library(List<Book> b) {
+        books = b;
+    }
+    public List<Book> getBooks() {
+        return books;
+    }
 }
