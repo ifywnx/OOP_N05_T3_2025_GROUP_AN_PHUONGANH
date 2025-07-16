@@ -1,5 +1,8 @@
 public class App {
     public static void main(String[] args) {
-        TestLibrary.test();
+        TestKhachhang.test();
+        TestSanpham.test();
+        TestNhanvien.test();
+        TestGiaodich.test();
     }
 }
