@@ -4,5 +4,6 @@ public class App {
         TestSanpham.test();
         TestNhanvien.test();
         TestGiaodich.test();
+        KiemTraSanPham.test();
     }
 }
