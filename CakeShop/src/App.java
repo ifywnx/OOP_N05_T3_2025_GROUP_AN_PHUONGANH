@@ -1,6 +1,10 @@
 public class App {
     public static void main(String[] args) {
-        TestStudent.test();
-        
+        TestKhachhang.test();
+        TestGiaodich.test();
+        TestNhanvien.test();
+        TestSanpham.test();
+        TestQuanLyGiaoDich.test();
+        KiemTraSanPham.test();
     }
 }
