@@ -6,5 +6,6 @@
         "complete/src/main/java/com/example/servingwebcontent"
     ],
     "java.project.referencedLibraries": [],
-    "java.debug.settings.onBuildFailureProceed": true
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.compile.nullAnalysis.mode": "automatic"
 }
