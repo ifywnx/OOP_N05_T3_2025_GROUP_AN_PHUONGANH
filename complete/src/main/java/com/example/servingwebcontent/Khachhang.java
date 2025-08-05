@@ -1,3 +1,4 @@
+package com.example.servingwebcontent;
 public class Khachhang {
 
     // Biến miêu tả - Member variable
