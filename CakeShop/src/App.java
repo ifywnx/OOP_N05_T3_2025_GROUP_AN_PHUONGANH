@@ -1,6 +1,8 @@
 public class App {
     public static void main(String[] args) {
-        TestQuanLyGiaoDich.test();
-        KiemTraSanPham.test();
+        //TestQuanLyGiaoDich.test();
+        //KiemTraSanPham.test();
+        //Student.test();
+      
     }
 }
