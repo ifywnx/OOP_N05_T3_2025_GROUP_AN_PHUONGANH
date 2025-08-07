@@ -1,44 +1,47 @@
-public class Giaodich {
+public class GiaoDich {
+    private String maGiaoDich;
+    private String ngayGiaoDich;
+    private String gioGiaoDich;
+    private double tongTien;
 
-    //bien mieu ta cho giao dich
-    private String MaGiaoDich;
-    String NgayThangNamGiaoDich;
-    String GioGiaoDich;
-    double TongTien;
-    //contructor
-    public Giaodich(){
-    }
+    public GiaoDich() {}
 
-    //phuong thuc hoat dong
-    public String setMaGiaoDich(String mgd){
-        MaGiaoDich = mgd;
-        return MaGiaoDich;
-    }
-    public void getMaGiaoDich(){
-        System.out.println("Hien thi Ma giao dich: " + MaGiaoDich);
+    public String getMaGiaoDich() {
+        return maGiaoDich;
     }
 
-    public String setNgayThangNamGiaoDich(String ntngd){
-        NgayThangNamGiaoDich = ntngd;
-        return NgayThangNamGiaoDich;
-    }
-    public void getNgayThangNamGiaoDich(){
-        System.out.println("Ngay thang nam giao dich: " + NgayThangNamGiaoDich);
+    public void setMaGiaoDich(String maGiaoDich) {
+        this.maGiaoDich = maGiaoDich;
     }
 
-    public String setGioGiaoDich(String ggd){
-        GioGiaoDich = ggd;
-        return GioGiaoDich;
-    }
-    public void getGioGiaoDich(){
-        System.out.println("Gio giao dich: " + GioGiaoDich);
+    public String getNgayGiaoDich() {
+        return ngayGiaoDich;
     }
 
-    public double setTongTien(double tt){
-        TongTien = tt;
-        return TongTien;
+    public void setNgayGiaoDich(String ngayGiaoDich) {
+        this.ngayGiaoDich = ngayGiaoDich;
     }
-    public void getTongTien(){
-        System.out.println("Tong tien: " + TongTien);
+
+    public String getGioGiaoDich() {
+        return gioGiaoDich;
+    }
+
+    public void setGioGiaoDich(String gioGiaoDich) {
+        this.gioGiaoDich = gioGiaoDich;
+    }
+
+    public double getTongTien() {
+        return tongTien;
+    }
+
+    public void setTongTien(double tongTien) {
+        this.tongTien = tongTien;
+    }
+
+    public void hienThi() {
+        System.out.println("Mã GD: " + maGiaoDich);
+        System.out.println("Ngày GD: " + ngayGiaoDich);
+        System.out.println("Giờ GD: " + gioGiaoDich);
+        System.out.println("Tổng tiền: " + tongTien);
     }
 }
