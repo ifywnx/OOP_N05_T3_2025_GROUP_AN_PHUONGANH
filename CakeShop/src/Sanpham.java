@@ -1,68 +1,67 @@
-public class Sanpham {
+public class SanPham {
+    private String maSanPham;
+    private String tenSanPham;
+    private int soLuong;
+    private String nhaSanXuat;
+    private String hanSuDung;
+    private String nguyenLieu;
 
-    // Biến miêu tả - Member variable
-   private String MaSanPham;
-   String TenSanPham;
-   int SoLuong;
-   String NhaSanXuat;
-   String HanSuDung;
-   String NguyenLieu;
-//contructor
-   public Sanpham(){
+    public SanPham() {}
 
-   }
-   public String setMaSanPham(String msp){
-    MaSanPham = msp;
-    return MaSanPham;
-   }
-   public void getMaSanPham(){
-    System.out.println("Hien thi ma san pham: " + MaSanPham);
-   }
+    public String getMaSanPham() {
+        return maSanPham;
+    }
 
-   public String setTenSanPham(String tsp){
-    TenSanPham = tsp;
-    return TenSanPham;
-   }
-   public void getTenSanPham(){
-    System.out.println("Hien thi ten san pham: " + TenSanPham);
-   }
+    public void setMaSanPham(String maSanPham) {
+        this.maSanPham = maSanPham;
+    }
 
-   public int setSoLuong(int sl){
-    SoLuong = sl;
-    return SoLuong;
-   }
-   public void getSoLuong(){
-    System.out.println("Hien thi so luong: " + SoLuong);
-   }
+    public String getTenSanPham() {
+        return tenSanPham;
+    }
 
-   public String setNhaSanXuat(String nsx){
-    NhaSanXuat = nsx;
-    return NhaSanXuat;
-   }
-   public void getNhaSanXuat(){
-    System.out.println("Hien thi nha san xuat: " + NhaSanXuat);
-   }
+    public void setTenSanPham(String tenSanPham) {
+        this.tenSanPham = tenSanPham;
+    }
 
-   public String setHanSuDung(String hsd){
-    HanSuDung = hsd;
-    return HanSuDung;
-   }
-   public void getHanSuDung(){
-    System.out.println("Hien thi han su dung: " + HanSuDung);
-   }
+    public int getSoLuong() {
+        return soLuong;
+    }
 
-   public String setNguyenLieu(String nl){
-    NguyenLieu = nl;
-    return NguyenLieu;
-   }
-   public void getNguyenLieu(){
-    System.out.println("Hien thi nguyen lieu: " + NguyenLieu);
-   }
-   public String getTenSanPham() {
-    return TenSanPham;
-}
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
+    }
 
-public int getSoLuong() {
-    return SoLuong;
-}
+    public String getNhaSanXuat() {
+        return nhaSanXuat;
+    }
+
+    public void setNhaSanXuat(String nhaSanXuat) {
+        this.nhaSanXuat = nhaSanXuat;
+    }
+
+    public String getHanSuDung() {
+        return hanSuDung;
+    }
+
+    public void setHanSuDung(String hanSuDung) {
+        this.hanSuDung = hanSuDung;
+    }
+
+    public String getNguyenLieu() {
+        return nguyenLieu;
+    }
+
+    public void setNguyenLieu(String nguyenLieu) {
+        this.nguyenLieu = nguyenLieu;
+    }
+
+    public void hienThi() {
+        System.out.println("Mã SP: " + maSanPham);
+        System.out.println("Tên SP: " + tenSanPham);
+        System.out.println("Số lượng: " + soLuong);
+        System.out.println("Nhà SX: " + nhaSanXuat);
+        System.out.println("HSD: " + hanSuDung);
+        System.out.println("Nguyên liệu: " + nguyenLieu);
+    }
 }
