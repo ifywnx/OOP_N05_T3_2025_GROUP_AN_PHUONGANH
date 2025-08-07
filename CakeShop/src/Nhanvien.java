@@ -1,63 +1,57 @@
-public class Nhanvien {
-    // Biến miêu tả - Member variable
-    private String MaNhanVien;
-    private String TenNhanVien;
-    private String DiaChi;
-    private String SoDienThoai;
-    private String TienLuong;
+public class NhanVien {
+    private String maNhanVien;
+    private String tenNhanVien;
+    private String diaChi;
+    private String soDienThoai;
+    private double tienLuong;
 
-    //contructor
-    public Nhanvien(){
-        
+    public NhanVien() {}
+
+    public String getMaNhanVien() {
+        return maNhanVien;
     }
 
-    // Methods
-    public String setMaNhanVien(String mnv){
-        MaNhanVien = mnv;
-        return MaNhanVien;
-
-    }
-    public void getMaNhanVien(){
-        System.out.println("Hien thi ma nhan vien: " + MaNhanVien);
-
+    public void setMaNhanVien(String maNhanVien) {
+        this.maNhanVien = maNhanVien;
     }
 
-    public String setTenNhanVien(String tennv){
-        TenNhanVien = tennv;
-        return TenNhanVien;
-
-    }
-    public void getTenNhanVien(){
-        System.out.println("Hien thi ten nhan vien: " + TenNhanVien);
-
+    public String getTenNhanVien() {
+        return tenNhanVien;
     }
 
-    public String setDiaChi(String dc){
-        DiaChi = dc;
-        return DiaChi;
-
-    }
-    public void getDiaChi(){
-        System.out.println("DiaChi: " + DiaChi);
-
+    public void setTenNhanVien(String tenNhanVien) {
+        this.tenNhanVien = tenNhanVien;
     }
 
-    public String setSoDienThoai(String sdt){
-        SoDienThoai = sdt;
-        return SoDienThoai;
-
-    }
-    public void getSoDienThoai(){
-        System.out.println("So dien thoai: " + SoDienThoai);
-
+    public String getDiaChi() {
+        return diaChi;
     }
 
-    public String setTienLuong(String luong){
-        TienLuong = luong;
-        return TienLuong;
-
+    public void setDiaChi(String diaChi) {
+        this.diaChi = diaChi;
     }
-    public void getTienLuong(){
-        System.out.println("Hien thi tien luong: " + TienLuong);
+
+    public String getSoDienThoai() {
+        return soDienThoai;
+    }
+
+    public void setSoDienThoai(String soDienThoai) {
+        this.soDienThoai = soDienThoai;
+    }
+
+    public double getTienLuong() {
+        return tienLuong;
+    }
+
+    public void setTienLuong(double tienLuong) {
+        this.tienLuong = tienLuong;
+    }
+
+    public void hienThi() {
+        System.out.println("Mã NV: " + maNhanVien);
+        System.out.println("Tên NV: " + tenNhanVien);
+        System.out.println("Địa chỉ: " + diaChi);
+        System.out.println("SĐT: " + soDienThoai);
+        System.out.println("Lương: " + tienLuong);
     }
 }
