@@ -15,7 +15,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .container {
@@ -166,18 +166,6 @@
             align-items: center;
         }
 
-        .section-label {
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-
         /* Thống kê dashboard */
         .stats-grid {
             display: grid;
@@ -316,11 +304,20 @@
             border-radius: 4px 4px 0 0;
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
         }
 
         .chart-bar:hover {
             transform: scaleY(1.1);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            font-size: 0.8em;
+            color: #718096;
         }
 
         /* Danh sách hoạt động */
@@ -335,6 +332,13 @@
             align-items: center;
             padding: 10px 0;
             border-bottom: 1px solid #e2e8f0;
+            transition: background-color 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background-color: #f7fafc;
+            padding: 10px;
+            border-radius: 8px;
         }
 
         .activity-item:last-child {
@@ -359,6 +363,138 @@
         .activity-value {
             font-weight: 600;
             color: #667eea;
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .status-completed {
+            background: #c6f6d5;
+            color: #2f855a;
+        }
+
+        .status-processing {
+            background: #feebc8;
+            color: #c05621;
+        }
+
+        /* Filter controls */
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            font-size: 0.9em;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .close:hover {
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         /* Responsive */
@@ -390,6 +526,10 @@
             
             .section-a {
                 grid-column: 1;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             }
         }
 
@@ -438,7 +578,7 @@
             </div>
             
             <div class="toolbar-right">
-                <input type="text" class="search-input" placeholder="🔍 Tìm kiếm...">
+                <input type="text" class="search-input" placeholder="🔍 Tìm kiếm..." onkeyup="performSearch()">
                 <div class="user-info">
                     <span>👤</span>
                     <span>Admin</span>
@@ -448,192 +588,78 @@
 
         <!-- Layout chính với 3 khu vực -->
         <div class="main-layout">
-            <!-- Khu vực A - Dashboard/Thống kê -->
-            <div class="section-a" id="section-a">
-                <div class="section-title">
-                    📊 Dashboard - Tổng quan hệ thống
-                    <button class="btn btn-primary">+ Tạo mới</button>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-orders">156</div>
-                        <div class="stat-label">Đơn hàng hôm nay</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-revenue">2.4M</div>
-                        <div class="stat-label">Doanh thu (VNĐ)</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-products">89</div>
-                        <div class="stat-label">Sản phẩm</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-customers">234</div>
-                        <div class="stat-label">Khách hàng</div>
-                    </div>
-                </div>
+            <!-- Khu vực A -->
+            <div class="section-a" id="section-a"></div>
+            <!-- Khu vực B -->
+            <div class="section-b" id="section-b"></div>
+            <!-- Khu vực C -->
+            <div class="section-c" id="section-c"></div>
+        </div>
+    </div>
 
-                <div class="chart-container">
-                    <div class="chart-title">📈 Doanh thu 7 ngày gần đây</div>
-                    <div class="chart-bars">
-                        <div class="chart-bar" style="height: 60%" title="Thứ 2: 1.2M"></div>
-                        <div class="chart-bar" style="height: 45%" title="Thứ 3: 900K"></div>
-                        <div class="chart-bar" style="height: 80%" title="Thứ 4: 1.6M"></div>
-                        <div class="chart-bar" style="height: 65%" title="Thứ 5: 1.3M"></div>
-                        <div class="chart-bar" style="height: 90%" title="Thứ 6: 1.8M"></div>
-                        <div class="chart-bar" style="height: 75%" title="Thứ 7: 1.5M"></div>
-                        <div class="chart-bar" style="height: 95%" title="Chủ nhật: 1.9M"></div>
-                    </div>
-                </div>
+    <!-- Modal for adding/editing -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">Thêm sản phẩm mới</h2>
+                <button class="close" onclick="closeModal()">&times;</button>
             </div>
-
-            <!-- Khu vực B - Sản phẩm/Dữ liệu chính -->
-            <div class="section-b" id="section-b">
-                <div class="section-title">
-                    🍰 Sản phẩm nổi bật
-                    <button class="btn btn-success">+ Thêm</button>
+            <form id="modal-form">
+                <div id="modal-body"></div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
                 </div>
-                
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tên sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Kho</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Bánh kem dâu tây</td>
-                                <td>350,000 VNĐ</td>
-                                <td>25</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Cupcake chocolate</td>
-                                <td>45,000 VNĐ</td>
-                                <td>48</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bánh mì sandwich</td>
-                                <td>35,000 VNĐ</td>
-                                <td>12</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bánh quy bơ</td>
-                                <td>25,000 VNĐ</td>
-                                <td>36</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bánh tiramisu</td>
-                                <td>450,000 VNĐ</td>
-                                <td>8</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Khu vực C - Hoạt động/Thông báo -->
-            <div class="section-c" id="section-c">
-                <div class="section-title">
-                    🔔 Hoạt động gần đây
-                    <button class="btn btn-primary">Xem tất cả</button>
-                </div>
-                
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Đơn hàng mới #1001</div>
-                            <div class="activity-time">10:30 - Nguyễn Văn A</div>
-                        </div>
-                        <div class="activity-value">450,000 VNĐ</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Thanh toán đơn #0998</div>
-                            <div class="activity-time">10:15 - Trần Thị B</div>
-                        </div>
-                        <div class="activity-value">320,000 VNĐ</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Khách hàng mới đăng ký</div>
-                            <div class="activity-time">09:45 - Lê Văn C</div>
-                        </div>
-                        <div class="activity-value">+1 KH</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Nhập kho bánh kem</div>
-                            <div class="activity-time">09:30 - Kho hàng</div>
-                        </div>
-                        <div class="activity-value">+50 SP</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Sản phẩm sắp hết</div>
-                            <div class="activity-time">09:00 - Hệ thống</div>
-                        </div>
-                        <div class="activity-value">⚠️ Cảnh báo</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Hoàn thành đơn #0995</div>
-                            <div class="activity-time">08:45 - Phạm Thị D</div>
-                        </div>
-                        <div class="activity-value">280,000 VNĐ</div>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
     <script>
-        // API Configuration
-        const API_BASE = '/api';
-        
-        // Chuyển đổi nội dung theo tab
+        // Data management
+        let data = {
+            products: [
+                { id: 1, name: 'Bánh kem dâu tây', price: 350000, stock: 25, category: 'Bánh kem', status: 'Còn hàng' },
+                { id: 2, name: 'Cupcake chocolate', price: 45000, stock: 48, category: 'Cupcake', status: 'Còn hàng' },
+                { id: 3, name: 'Bánh mì sandwich', price: 35000, stock: 12, category: 'Bánh mì', status: 'Sắp hết' },
+                { id: 4, name: 'Bánh quy bơ', price: 25000, stock: 36, category: 'Bánh quy', status: 'Còn hàng' },
+                { id: 5, name: 'Bánh tiramisu', price: 450000, stock: 8, category: 'Bánh kem', status: 'Sắp hết' },
+                { id: 6, name: 'Donut glazed', price: 20000, stock: 55, category: 'Donut', status: 'Còn hàng' },
+                { id: 7, name: 'Croissant bơ', price: 30000, stock: 28, category: 'Bánh mì', status: 'Còn hàng' }
+            ],
+            orders: [
+                { id: 1001, customer: 'Nguyễn Văn A', total: 450000, status: 'Hoàn thành', date: '2025-08-09', items: 3 },
+                { id: 1000, customer: 'Trần Thị B', total: 320000, status: 'Đang xử lý', date: '2025-08-09', items: 2 },
+                { id: 999, customer: 'Lê Văn C', total: 180000, status: 'Chờ xác nhận', date: '2025-08-08', items: 4 },
+                { id: 998, customer: 'Phạm Thị D', total: 280000, status: 'Hoàn thành', date: '2025-08-08', items: 2 },
+                { id: 997, customer: 'Hoàng Văn E', total: 650000, status: 'Đang giao', date: '2025-08-08', items: 5 }
+            ],
+            customers: [
+                { id: 1, name: 'Nguyễn Văn A', phone: '0901234567', email: 'a@email.com', orders: 15, total: 4500000 },
+                { id: 2, name: 'Trần Thị B', phone: '0902345678', email: 'b@email.com', orders: 8, total: 2800000 },
+                { id: 3, name: 'Lê Văn C', phone: '0903456789', email: 'c@email.com', orders: 12, total: 3200000 },
+                { id: 4, name: 'Phạm Thị D', phone: '0904567890', email: 'd@email.com', orders: 6, total: 1800000 },
+                { id: 5, name: 'Hoàng Văn E', phone: '0905678901', email: 'e@email.com', orders: 20, total: 6500000 }
+            ],
+            activities: [
+                { type: 'order', title: 'Đơn hàng mới #1001', time: '10:30', detail: 'Nguyễn Văn A', value: '450,000 VNĐ' },
+                { type: 'payment', title: 'Thanh toán đơn #1000', time: '10:15', detail: 'Trần Thị B', value: '320,000 VNĐ' },
+                { type: 'customer', title: 'Khách hàng mới đăng ký', time: '09:45', detail: 'Lê Văn C', value: '+1 KH' },
+                { type: 'inventory', title: 'Nhập kho bánh kem', time: '09:30', detail: 'Kho hàng', value: '+50 SP' },
+                { type: 'alert', title: 'Sản phẩm sắp hết', time: '09:00', detail: 'Hệ thống', value: '⚠️ Cảnh báo' },
+                { type: 'complete', title: 'Hoàn thành đơn #998', time: '08:45', detail: 'Phạm Thị D', value: '280,000 VNĐ' }
+            ]
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            switchContent('dashboard');
+        });
+
+        // Navigation function
         function switchContent(contentType) {
             // Update active navigation button
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            
-            const sectionA = document.getElementById('section-a');
-            const sectionB = document.getElementById('section-b');
-            const sectionC = document.getElementById('section-c');
-            
-            // Clear current content
-            sectionA.innerHTML = '';
-            sectionB.innerHTML = '';
-            sectionC.innerHTML = '';
             
             switch(contentType) {
                 case 'dashboard':
@@ -653,29 +679,34 @@
                     break;
             }
         }
-        
+
         function loadDashboardContent() {
+            const totalOrders = data.orders.length;
+            const totalRevenue = data.orders.reduce((sum, order) => sum + order.total, 0);
+            const totalProducts = data.products.length;
+            const totalCustomers = data.customers.length;
+
             document.getElementById('section-a').innerHTML = `
                 <div class="section-title">
                     📊 Dashboard - Tổng quan hệ thống
-                    <button class="btn btn-primary">+ Tạo mới</button>
+                    <button class="btn btn-primary" onclick="showQuickActions()">⚡ Thao tác nhanh</button>
                 </div>
                 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-number">156</div>
+                        <div class="stat-number">${totalOrders}</div>
                         <div class="stat-label">Đơn hàng hôm nay</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">2.4M</div>
+                        <div class="stat-number">${formatCurrency(totalRevenue)}</div>
                         <div class="stat-label">Doanh thu (VNĐ)</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">89</div>
+                        <div class="stat-number">${totalProducts}</div>
                         <div class="stat-label">Sản phẩm</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">234</div>
+                        <div class="stat-number">${totalCustomers}</div>
                         <div class="stat-label">Khách hàng</div>
                     </div>
                 </div>
@@ -691,13 +722,16 @@
                         <div class="chart-bar" style="height: 75%" title="Thứ 7: 1.5M"></div>
                         <div class="chart-bar" style="height: 95%" title="Chủ nhật: 1.9M"></div>
                     </div>
+                    <div class="chart-labels">
+                        <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+                    </div>
                 </div>
             `;
             
             document.getElementById('section-b').innerHTML = `
                 <div class="section-title">
                     🍰 Sản phẩm nổi bật
-                    <button class="btn btn-success">+ Thêm</button>
+                    <button class="btn btn-success" onclick="showAddProductModal()">+ Thêm</button>
                 </div>
                 
                 <div class="table-container">
@@ -707,37 +741,18 @@
                                 <th>Tên sản phẩm</th>
                                 <th>Giá</th>
                                 <th>Kho</th>
-                                <th>Thao tác</th>
+                                <th>Trạng thái</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Bánh kem dâu tây</td>
-                                <td>350,000 VNĐ</td>
-                                <td>25</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Cupcake chocolate</td>
-                                <td>45,000 VNĐ</td>
-                                <td>48</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bánh mì sandwich</td>
-                                <td>35,000 VNĐ</td>
-                                <td>12</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
+                            ${data.products.slice(0, 5).map(product => `
+                                <tr>
+                                    <td>${product.name}</td>
+                                    <td>${formatCurrency(product.price)}</td>
+                                    <td>${product.stock}</td>
+                                    <td><span class="status-badge ${product.stock < 15 ? 'status-pending' : 'status-completed'}">${product.status}</span></td>
+                                </tr>
+                            `).join('')}
                         </tbody>
                     </table>
                 </div>
@@ -746,49 +761,1069 @@
             document.getElementById('section-c').innerHTML = `
                 <div class="section-title">
                     🔔 Hoạt động gần đây
-                    <button class="btn btn-primary">Xem tất cả</button>
+                    <button class="btn btn-primary" onclick="refreshActivities()">🔄 Làm mới</button>
                 </div>
                 
                 <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Đơn hàng mới #1001</div>
-                            <div class="activity-time">10:30 - Nguyễn Văn A</div>
+                    ${data.activities.map(activity => `
+                        <div class="activity-item">
+                            <div class="activity-info">
+                                <div class="activity-title">${activity.title}</div>
+                                <div class="activity-time">${activity.time} - ${activity.detail}</div>
+                            </div>
+                            <div class="activity-value">${activity.value}</div>
                         </div>
-                        <div class="activity-value">450,000 VNĐ</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Thanh toán đơn #0998</div>
-                            <div class="activity-time">10:15 - Trần Thị B</div>
-                        </div>
-                        <div class="activity-value">320,000 VNĐ</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Khách hàng mới đăng ký</div>
-                            <div class="activity-time">09:45 - Lê Văn C</div>
-                        </div>
-                        <div class="activity-value">+1 KH</div>
-                    </div>
+                    `).join('')}
                 </div>
             `;
         }
-        
+
         function loadProductsContent() {
             document.getElementById('section-a').innerHTML = `
                 <div class="section-title">
                     🍰 Quản lý Sản phẩm
-                    <button class="btn btn-primary" onclick="alert('Thêm sản phẩm mới')">+ Thêm sản phẩm</button>
+                    <button class="btn btn-primary" onclick="showAddProductModal()">+ Thêm sản phẩm</button>
+                </div>
+                
+                <div class="filter-container">
+                    <select class="filter-select" onchange="filterProducts(this.value)">
+                        <option value="">Tất cả danh mục</option>
+                        <option value="Bánh kem">Bánh kem</option>
+                        <option value="Cupcake">Cupcake</option>
+                        <option value="Bánh mì">Bánh mì</option>
+                        <option value="Bánh quy">Bánh quy</option>
+                        <option value="Donut">Donut</option>
+                    </select>
+                    <select class="filter-select" onchange="filterProductsByStatus(this.value)">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="Còn hàng">Còn hàng</option>
+                        <option value="Sắp hết">Sắp hết</option>
+                        <option value="Hết hàng">Hết hàng</option>
+                    </select>
                 </div>
                 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-number">89</div>
+                        <div class="stat-number">${data.products.length}</div>
                         <div class="stat-label">Tổng sản phẩm</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">Sản phẩm hot
+                        <div class="stat-number">${data.products.filter(p => p.stock < 15).length}</div>
+                        <div class="stat-label">Sản phẩm sắp hết</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${data.products.filter(p => p.stock > 30).length}</div>
+                        <div class="stat-label">Sản phẩm hot</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${new Set(data.products.map(p => p.category)).size}</div>
+                        <div class="stat-label">Danh mục</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('section-b').innerHTML = `
+                <div class="section-title">
+                    📦 Danh sách sản phẩm
+                    <button class="btn btn-success" onclick="exportProducts()">📤 Xuất Excel</button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Danh mục</th>
+                                <th>Giá</th>
+                                <th>Kho</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            ${data.products.map(product => `
+                                <tr>
+                                    <td>#${product.id}</td>
+                                    <td>${product.name}</td>
+                                    <td>${product.category}</td>
+                                    <td>${formatCurrency(product.price)}</td>
+                                    <td>${product.stock}</td>
+                                    <td><span class="status-badge ${product.stock < 15 ? 'status-pending' : 'status-completed'}">${product.status}</span></td>
+                                    <td>
+                                        <button class="btn btn-warning" onclick="editProduct(${product.id})">✏️ Sửa</button>
+                                        <button class="btn btn-danger" onclick="deleteProduct(${product.id})">🗑️ Xóa</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            document.getElementById('section-c').innerHTML = `
+                <div class="section-title">
+                    📊 Thống kê nhanh
+                    <button class="btn btn-primary" onclick="generateProductReport()">📄 Báo cáo</button>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">🏆 Top sản phẩm bán chạy</h4>
+                    ${data.products.sort((a, b) => b.stock - a.stock).slice(0, 3).map((product, index) => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                            <div>
+                                <div style="font-weight: 500;">Báo cáo khách hàng Q2</div>
+                                <div style="font-size: 0.8em; color: #718096;">30/07/2025 - 09:45</div>
+                            </div>
+                            <button class="btn btn-primary" onclick="downloadReport('customers_q2')">📥</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount).replace('₫', 'VNĐ');
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        function getOrderStatusClass(status) {
+            switch(status) {
+                case 'Chờ xác nhận': return 'status-pending';
+                case 'Đang xử lý': return 'status-processing';
+                case 'Đang giao': return 'status-processing';
+                case 'Hoàn thành': return 'status-completed';
+                case 'Đã hủy': return 'status-pending';
+                default: return 'status-pending';
+            }
+        }
+
+        function getCustomerRank(orders) {
+            if (orders > 15) return 'VIP';
+            if (orders >= 5) return 'Thường xuyên';
+            return 'Mới';
+        }
+
+        function getCustomerRankClass(orders) {
+            if (orders > 15) return 'status-completed';
+            if (orders >= 5) return 'status-processing';
+            return 'status-pending';
+        }
+
+        // Modal functions
+        function showModal(title, content) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').innerHTML = content;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function showAddProductModal() {
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Tên sản phẩm</label>
+                    <input type="text" class="form-input" id="product-name" placeholder="Nhập tên sản phẩm">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Danh mục</label>
+                    <select class="form-input" id="product-category">
+                        <option value="Bánh kem">Bánh kem</option>
+                        <option value="Cupcake">Cupcake</option>
+                        <option value="Bánh mì">Bánh mì</option>
+                        <option value="Bánh quy">Bánh quy</option>
+                        <option value="Donut">Donut</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Giá (VNĐ)</label>
+                    <input type="number" class="form-input" id="product-price" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số lượng</label>
+                    <input type="number" class="form-input" id="product-stock" placeholder="0">
+                </div>
+            `;
+            showModal('Thêm sản phẩm mới', content);
+        }
+
+        function showAddOrderModal() {
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Khách hàng</label>
+                    <select class="form-input" id="order-customer">
+                        ${data.customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sản phẩm</label>
+                    <select class="form-input" id="order-product">
+                        ${data.products.map(p => `<option value="${p.id}">${p.name} - ${formatCurrency(p.price)}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số lượng</label>
+                    <input type="number" class="form-input" id="order-quantity" placeholder="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea class="form-input" id="order-note" placeholder="Ghi chú đơn hàng..."></textarea>
+                </div>
+            `;
+            showModal('Tạo đơn hàng mới', content);
+        }
+
+        function showAddCustomerModal() {
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Tên khách hàng</label>
+                    <input type="text" class="form-input" id="customer-name" placeholder="Nhập tên khách hàng">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="tel" class="form-input" id="customer-phone" placeholder="0901234567">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="customer-email" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Địa chỉ</label>
+                    <textarea class="form-input" id="customer-address" placeholder="Nhập địa chỉ khách hàng..."></textarea>
+                </div>
+            `;
+            showModal('Thêm khách hàng mới', content);
+        }
+
+        // Search and filter functions
+        function performSearch() {
+            const query = document.querySelector('.search-input').value.toLowerCase();
+            // Implement search logic based on current tab
+            console.log('Searching for:', query);
+        }
+
+        function filterProducts(category) {
+            console.log('Filter products by category:', category);
+            // Implement product filtering
+        }
+
+        function filterProductsByStatus(status) {
+            console.log('Filter products by status:', status);
+            // Implement status filtering
+        }
+
+        function filterOrders(status) {
+            console.log('Filter orders by status:', status);
+            // Implement order filtering
+        }
+
+        function filterOrdersByDate(date) {
+            console.log('Filter orders by date:', date);
+            // Implement date filtering
+        }
+
+        function searchCustomers(query) {
+            console.log('Search customers:', query);
+            // Implement customer search
+        }
+
+        function filterCustomersByOrders(type) {
+            console.log('Filter customers by order type:', type);
+            // Implement customer filtering
+        }
+
+        // CRUD operations
+        function editProduct(id) {
+            const product = data.products.find(p => p.id === id);
+            if (product) {
+                const content = `
+                    <div class="form-group">
+                        <label class="form-label">Tên sản phẩm</label>
+                        <input type="text" class="form-input" id="product-name" value="${product.name}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Danh mục</label>
+                        <select class="form-input" id="product-category">
+                            <option value="Bánh kem" ${product.category === 'Bánh kem' ? 'selected' : ''}>Bánh kem</option>
+                            <option value="Cupcake" ${product.category === 'Cupcake' ? 'selected' : ''}>Cupcake</option>
+                            <option value="Bánh mì" ${product.category === 'Bánh mì' ? 'selected' : ''}>Bánh mì</option>
+                            <option value="Bánh quy" ${product.category === 'Bánh quy' ? 'selected' : ''}>Bánh quy</option>
+                            <option value="Donut" ${product.category === 'Donut' ? 'selected' : ''}>Donut</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Giá (VNĐ)</label>
+                        <input type="number" class="form-input" id="product-price" value="${product.price}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số lượng</label>
+                        <input type="number" class="form-input" id="product-stock" value="${product.stock}">
+                    </div>
+                `;
+                showModal('Chỉnh sửa sản phẩm', content);
+            }
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+                data.products = data.products.filter(p => p.id !== id);
+                loadProductsContent();
+                showNotification('Đã xóa sản phẩm thành công!', 'success');
+            }
+        }
+
+        function editOrder(id) {
+            const order = data.orders.find(o => o.id === id);
+            if (order) {
+                const content = `
+                    <div class="form-group">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-input" id="order-status">
+                            <option value="Chờ xác nhận" ${order.status === 'Chờ xác nhận' ? 'selected' : ''}>Chờ xác nhận</option>
+                            <option value="Đang xử lý" ${order.status === 'Đang xử lý' ? 'selected' : ''}>Đang xử lý</option>
+                            <option value="Đang giao" ${order.status === 'Đang giao' ? 'selected' : ''}>Đang giao</option>
+                            <option value="Hoàn thành" ${order.status === 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option>
+                            <option value="Đã hủy" ${order.status === 'Đã hủy' ? 'selected' : ''}>Đã hủy</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ghi chú</label>
+                        <textarea class="form-input" id="order-note" placeholder="Ghi chú cập nhật..."></textarea>
+                    </div>
+                `;
+                showModal('Cập nhật đơn hàng #' + order.id, content);
+            }
+        }
+
+        function viewOrderDetails(id) {
+            const order = data.orders.find(o => o.id === id);
+            if (order) {
+                const content = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <strong>Mã đơn hàng:</strong> #${order.id}<br>
+                            <strong>Khách hàng:</strong> ${order.customer}<br>
+                            <strong>Ngày đặt:</strong> ${formatDate(order.date)}<br>
+                        </div>
+                        <div>
+                            <strong>Trạng thái:</strong> ${order.status}<br>
+                            <strong>Số sản phẩm:</strong> ${order.items}<br>
+                            <strong>Tổng tiền:</strong> ${formatCurrency(order.total)}<br>
+                        </div>
+                    </div>
+                    <hr style="margin: 15px 0;">
+                    <h4>Chi tiết sản phẩm:</h4>
+                    <div style="background: #f7fafc; padding: 10px; border-radius: 8px; margin-top: 10px;">
+                        <p>• Bánh kem dâu tây x2 - 700,000 VNĐ</p>
+                        <p>• Cupcake chocolate x1 - 45,000 VNĐ</p>
+                    </div>
+                `;
+                showModal('Chi tiết đơn hàng #' + order.id, content);
+            }
+        }
+
+        function editCustomer(id) {
+            const customer = data.customers.find(c => c.id === id);
+            if (customer) {
+                const content = `
+                    <div class="form-group">
+                        <label class="form-label">Tên khách hàng</label>
+                        <input type="text" class="form-input" id="customer-name" value="${customer.name}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="tel" class="form-input" id="customer-phone" value="${customer.phone}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="customer-email" value="${customer.email}">
+                    </div>
+                `;
+                showModal('Chỉnh sửa khách hàng', content);
+            }
+        }
+
+        function viewCustomerHistory(id) {
+            const customer = data.customers.find(c => c.id === id);
+            if (customer) {
+                const customerOrders = data.orders.filter(o => o.customer === customer.name);
+                const content = `
+                    <div style="margin-bottom: 15px;">
+                        <strong>Khách hàng:</strong> ${customer.name}<br>
+                        <strong>Tổng đơn hàng:</strong> ${customer.orders}<br>
+                        <strong>Tổng chi tiêu:</strong> ${formatCurrency(customer.total)}<br>
+                        <strong>Hạng:</strong> ${getCustomerRank(customer.orders)}
+                    </div>
+                    <hr>
+                    <h4>Lịch sử đơn hàng:</h4>
+                    <div style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
+                        ${customerOrders.map(order => `
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                                <div>
+                                    <strong>#${order.id}</strong><br>
+                                    <small>${formatDate(order.date)}</small>
+                                </div>
+                                <div style="text-align: right;">
+                                    ${formatCurrency(order.total)}<br>
+                                    <small>${order.status}</small>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                showModal('Lịch sử khách hàng - ' + customer.name, content);
+            }
+        }
+
+        // Action functions
+        function showQuickActions() {
+            alert('Tính năng thao tác nhanh sẽ được cập nhật!');
+        }
+
+        function refreshActivities() {
+            loadDashboardContent();
+            showNotification('Đã làm mới hoạt động!', 'success');
+        }
+
+        function exportProducts() {
+            alert('Đang xuất danh sách sản phẩm ra Excel...');
+        }
+
+        function exportOrders() {
+            alert('Đang xuất báo cáo đơn hàng...');
+        }
+
+        function exportCustomers() {
+            alert('Đang xuất danh sách khách hàng...');
+        }
+
+        function generateProductReport() {
+            alert('Đang tạo báo cáo sản phẩm...');
+        }
+
+        function refreshOrderStats() {
+            loadOrdersContent();
+            showNotification('Đã cập nhật thống kê đơn hàng!', 'success');
+        }
+
+        function generateCustomerReport() {
+            alert('Đang tạo báo cáo khách hàng...');
+        }
+
+        function generateFullReport() {
+            alert('Đang tạo báo cáo tổng hợp...');
+        }
+
+        function generateCustomReport() {
+            const type = document.getElementById('report-type').value;
+            const startDate = document.getElementById('report-start-date').value;
+            const endDate = document.getElementById('report-end-date').value;
+            alert(`Đang tạo báo cáo ${type} từ ${startDate} đến ${endDate}...`);
+        }
+
+        function exportReport() {
+            alert('Đang xuất báo cáo ra Excel...');
+        }
+
+        function generateDailyReport() {
+            alert('Đang tạo báo cáo ngày...');
+        }
+
+        function generateWeeklyReport() {
+            alert('Đang tạo báo cáo tuần...');
+        }
+
+        function generateMonthlyReport() {
+            alert('Đang tạo báo cáo tháng...');
+        }
+
+        function generateInventoryReport() {
+            alert('Đang tạo báo cáo tồn kho...');
+        }
+
+        function scheduleReport() {
+            alert('Tính năng lập lịch báo cáo sẽ được cập nhật!');
+        }
+
+        function downloadReport(reportId) {
+            alert(`Đang tải báo cáo ${reportId}...`);
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            
+            switch(type) {
+                case 'success':
+                    notification.style.background = 'linear-gradient(45deg, #48bb78, #38a169)';
+                    break;
+                case 'error':
+                    notification.style.background = 'linear-gradient(45deg, #f56565, #e53e3e)';
+                    break;
+                case 'warning':
+                    notification.style.background = 'linear-gradient(45deg, #ed8936, #dd6b20)';
+                    break;
+                default:
+                    notification.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Form submission handling
+        document.getElementById('modal-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const modalTitle = document.getElementById('modal-title').textContent;
+            
+            if (modalTitle.includes('sản phẩm')) {
+                // Handle product form
+                const name = document.getElementById('product-name').value;
+                const category = document.getElementById('product-category').value;
+                const price = parseInt(document.getElementById('product-price').value);
+                const stock = parseInt(document.getElementById('product-stock').value);
+                
+                if (name && category && price && stock) {
+                    if (modalTitle.includes('Thêm')) {
+                        // Add new product
+                        const newProduct = {
+                            id: Math.max(...data.products.map(p => p.id)) + 1,
+                            name: name,
+                            category: category,
+                            price: price,
+                            stock: stock,
+                            status: stock > 15 ? 'Còn hàng' : 'Sắp hết'
+                        };
+                        data.products.push(newProduct);
+                        showNotification('Đã thêm sản phẩm mới thành công!', 'success');
+                    } else {
+                        // Edit existing product (implement if needed)
+                        showNotification('Đã cập nhật sản phẩm thành công!', 'success');
+                    }
+                    
+                    loadProductsContent();
+                    closeModal();
+                } else {
+                    showNotification('Vui lòng điền đầy đủ thông tin!', 'error');
+                }
+            } else if (modalTitle.includes('đơn hàng')) {
+                // Handle order form
+                showNotification('Đã tạo đơn hàng mới thành công!', 'success');
+                closeModal();
+            } else if (modalTitle.includes('khách hàng')) {
+                // Handle customer form
+                const name = document.getElementById('customer-name').value;
+                const phone = document.getElementById('customer-phone').value;
+                const email = document.getElementById('customer-email').value;
+                
+                if (name && phone && email) {
+                    if (modalTitle.includes('Thêm')) {
+                        const newCustomer = {
+                            id: Math.max(...data.customers.map(c => c.id)) + 1,
+                            name: name,
+                            phone: phone,
+                            email: email,
+                            orders: 0,
+                            total: 0
+                        };
+                        data.customers.push(newCustomer);
+                        showNotification('Đã thêm khách hàng mới thành công!', 'success');
+                    } else {
+                        showNotification('Đã cập nhật khách hàng thành công!', 'success');
+                    }
+                    
+                    loadCustomersContent();
+                    closeModal();
+                } else {
+                    showNotification('Vui lòng điền đầy đủ thông tin!', 'error');
+                }
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <span>${index + 1}. ${product.name}</span>
+                            <span style="font-weight: 600; color: #667eea;">${product.stock} SP</span>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 10px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">⚠️ Cảnh báo tồn kho</h4>
+                    ${data.products.filter(p => p.stock < 15).map(product => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <span>${product.name}</span>
+                            <span style="font-weight: 600; color: #e53e3e;">${product.stock} SP</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function loadOrdersContent() {
+            const pendingOrders = data.orders.filter(o => o.status === 'Chờ xác nhận').length;
+            const processingOrders = data.orders.filter(o => o.status === 'Đang xử lý').length;
+            const completedOrders = data.orders.filter(o => o.status === 'Hoàn thành').length;
+            const totalRevenue = data.orders.reduce((sum, order) => sum + order.total, 0);
+
+            document.getElementById('section-a').innerHTML = `
+                <div class="section-title">
+                    📋 Quản lý Đơn hàng
+                    <button class="btn btn-primary" onclick="showAddOrderModal()">+ Tạo đơn hàng</button>
+                </div>
+                
+                <div class="filter-container">
+                    <select class="filter-select" onchange="filterOrders(this.value)">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="Chờ xác nhận">Chờ xác nhận</option>
+                        <option value="Đang xử lý">Đang xử lý</option>
+                        <option value="Đang giao">Đang giao</option>
+                        <option value="Hoàn thành">Hoàn thành</option>
+                        <option value="Đã hủy">Đã hủy</option>
+                    </select>
+                    <input type="date" class="filter-select" onchange="filterOrdersByDate(this.value)">
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">${pendingOrders}</div>
+                        <div class="stat-label">Chờ xác nhận</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${processingOrders}</div>
+                        <div class="stat-label">Đang xử lý</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${completedOrders}</div>
+                        <div class="stat-label">Hoàn thành</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${formatCurrency(totalRevenue)}</div>
+                        <div class="stat-label">Tổng doanh thu</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('section-b').innerHTML = `
+                <div class="section-title">
+                    📝 Danh sách đơn hàng
+                    <button class="btn btn-success" onclick="exportOrders()">📤 Xuất báo cáo</button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>Ngày đặt</th>
+                                <th>Số SP</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            ${data.orders.map(order => `
+                                <tr>
+                                    <td>#${order.id}</td>
+                                    <td>${order.customer}</td>
+                                    <td>${formatDate(order.date)}</td>
+                                    <td>${order.items}</td>
+                                    <td>${formatCurrency(order.total)}</td>
+                                    <td><span class="status-badge ${getOrderStatusClass(order.status)}">${order.status}</span></td>
+                                    <td>
+                                        <button class="btn btn-warning" onclick="editOrder(${order.id})">✏️ Sửa</button>
+                                        <button class="btn btn-primary" onclick="viewOrderDetails(${order.id})">👁️ Xem</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            document.getElementById('section-c').innerHTML = `
+                <div class="section-title">
+                    📈 Thống kê đơn hàng
+                    <button class="btn btn-primary" onclick="refreshOrderStats()">🔄 Làm mới</button>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">📊 Đơn hàng theo trạng thái</h4>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Chờ xác nhận:</span>
+                            <strong style="color: #ed8936;">${pendingOrders}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Đang xử lý:</span>
+                            <strong style="color: #667eea;">${processingOrders}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Hoàn thành:</span>
+                            <strong style="color: #48bb78;">${completedOrders}</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 10px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">🎯 Đơn hàng hôm nay</h4>
+                    ${data.orders.filter(o => o.date === '2025-08-09').slice(0, 3).map(order => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <div>
+                                <div style="font-weight: 500;">#${order.id}</div>
+                                <div style="font-size: 0.8em; color: #718096;">${order.customer}</div>
+                            </div>
+                            <span style="font-weight: 600; color: #667eea;">${formatCurrency(order.total)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function loadCustomersContent() {
+            const totalCustomers = data.customers.length;
+            const totalOrdersFromCustomers = data.customers.reduce((sum, c) => sum + c.orders, 0);
+            const totalRevenueFromCustomers = data.customers.reduce((sum, c) => sum + c.total, 0);
+            const avgOrderValue = totalRevenueFromCustomers / totalOrdersFromCustomers;
+
+            document.getElementById('section-a').innerHTML = `
+                <div class="section-title">
+                    👥 Quản lý Khách hàng
+                    <button class="btn btn-primary" onclick="showAddCustomerModal()">+ Thêm khách hàng</button>
+                </div>
+                
+                <div class="filter-container">
+                    <input type="text" class="filter-select" placeholder="Tìm theo tên..." onkeyup="searchCustomers(this.value)">
+                    <select class="filter-select" onchange="filterCustomersByOrders(this.value)">
+                        <option value="">Tất cả khách hàng</option>
+                        <option value="vip">VIP (>15 đơn)</option>
+                        <option value="regular">Thường xuyên (5-15 đơn)</option>
+                        <option value="new">Mới (<5 đơn)</option>
+                    </select>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">${totalCustomers}</div>
+                        <div class="stat-label">Tổng khách hàng</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${data.customers.filter(c => c.orders > 15).length}</div>
+                        <div class="stat-label">Khách VIP</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${formatCurrency(avgOrderValue)}</div>
+                        <div class="stat-label">Giá trị TB/đơn</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${data.customers.filter(c => c.orders < 5).length}</div>
+                        <div class="stat-label">Khách hàng mới</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('section-b').innerHTML = `
+                <div class="section-title">
+                    📇 Danh sách khách hàng
+                    <button class="btn btn-success" onclick="exportCustomers()">📤 Xuất danh sách</button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên khách hàng</th>
+                                <th>Điện thoại</th>
+                                <th>Email</th>
+                                <th>Số đơn</th>
+                                <th>Tổng chi tiêu</th>
+                                <th>Hạng</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table-body">
+                            ${data.customers.map(customer => `
+                                <tr>
+                                    <td>#${customer.id}</td>
+                                    <td>${customer.name}</td>
+                                    <td>${customer.phone}</td>
+                                    <td>${customer.email}</td>
+                                    <td>${customer.orders}</td>
+                                    <td>${formatCurrency(customer.total)}</td>
+                                    <td><span class="status-badge ${getCustomerRankClass(customer.orders)}">${getCustomerRank(customer.orders)}</span></td>
+                                    <td>
+                                        <button class="btn btn-warning" onclick="editCustomer(${customer.id})">✏️ Sửa</button>
+                                        <button class="btn btn-primary" onclick="viewCustomerHistory(${customer.id})">📊 Lịch sử</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            document.getElementById('section-c').innerHTML = `
+                <div class="section-title">
+                    🏆 Top khách hàng
+                    <button class="btn btn-primary" onclick="generateCustomerReport()">📊 Báo cáo</button>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">💎 Top khách VIP</h4>
+                    ${data.customers.sort((a, b) => b.total - a.total).slice(0, 5).map((customer, index) => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <div>
+                                <div style="font-weight: 500;">${index + 1}. ${customer.name}</div>
+                                <div style="font-size: 0.8em; color: #718096;">${customer.orders} đơn hàng</div>
+                            </div>
+                            <span style="font-weight: 600; color: #667eea;">${formatCurrency(customer.total)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 10px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">📊 Phân loại khách hàng</h4>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>VIP (>15 đơn):</span>
+                            <strong style="color: #9f7aea;">${data.customers.filter(c => c.orders > 15).length}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Thường xuyên (5-15 đơn):</span>
+                            <strong style="color: #667eea;">${data.customers.filter(c => c.orders >= 5 && c.orders <= 15).length}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Mới (<5 đơn):</span>
+                            <strong style="color: #48bb78;">${data.customers.filter(c => c.orders < 5).length}</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadReportsContent() {
+            document.getElementById('section-a').innerHTML = `
+                <div class="section-title">
+                    📈 Báo cáo & Thống kê
+                    <button class="btn btn-primary" onclick="generateFullReport()">📄 Tạo báo cáo tổng</button>
+                </div>
+                
+                <div class="filter-container">
+                    <input type="date" class="filter-select" id="report-start-date">
+                    <input type="date" class="filter-select" id="report-end-date">
+                    <select class="filter-select" id="report-type">
+                        <option value="revenue">Doanh thu</option>
+                        <option value="products">Sản phẩm</option>
+                        <option value="customers">Khách hàng</option>
+                        <option value="orders">Đơn hàng</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="generateCustomReport()">📊 Tạo báo cáo</button>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">📊 Doanh thu theo tháng (2025)</div>
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 40%" title="Tháng 1: 8.5M"></div>
+                        <div class="chart-bar" style="height: 55%" title="Tháng 2: 12.2M"></div>
+                        <div class="chart-bar" style="height: 70%" title="Tháng 3: 15.8M"></div>
+                        <div class="chart-bar" style="height: 60%" title="Tháng 4: 13.5M"></div>
+                        <div class="chart-bar" style="height: 80%" title="Tháng 5: 18.2M"></div>
+                        <div class="chart-bar" style="height: 75%" title="Tháng 6: 16.8M"></div>
+                        <div class="chart-bar" style="height: 85%" title="Tháng 7: 19.5M"></div>
+                        <div class="chart-bar" style="height: 90%" title="Tháng 8: 21.2M"></div>
+                    </div>
+                    <div class="chart-labels">
+                        <span>T1</span><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>T8</span>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('section-b').innerHTML = `
+                <div class="section-title">
+                    📊 Thống kê chi tiết
+                    <button class="btn btn-success" onclick="exportReport()">📤 Xuất Excel</button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <h4 style="color: #4a5568; margin-bottom: 10px;">🎯 Chỉ số KPI</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Doanh thu tháng:</span>
+                                <strong style="color: #48bb78;">21.2M VNĐ</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Tăng trưởng:</span>
+                                <strong style="color: #48bb78;">+8.7%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Đơn hàng/ngày:</span>
+                                <strong style="color: #667eea;">47</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Giá trị TB/đơn:</span>
+                                <strong style="color: #667eea;">451K VNĐ</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <h4 style="color: #4a5568; margin-bottom: 10px;">📈 So với tháng trước</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Doanh thu:</span>
+                                <strong style="color: #48bb78;">+1.7M (+8.7%)</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Đơn hàng:</span>
+                                <strong style="color: #48bb78;">+23 (+5.1%)</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Khách hàng mới:</span>
+                                <strong style="color: #48bb78;">+12 (+15.2%)</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Sản phẩm bán:</span>
+                                <strong style="color: #48bb78;">+89 (+12.3%)</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 10px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">🏆 Top sản phẩm bán chạy tháng này</h4>
+                    <div class="table-container" style="max-height: 200px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Hạng</th>
+                                    <th>Sản phẩm</th>
+                                    <th>Số lượng bán</th>
+                                    <th>Doanh thu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Bánh kem dâu tây</td>
+                                    <td>156</td>
+                                    <td>54.6M VNĐ</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Cupcake chocolate</td>
+                                    <td>234</td>
+                                    <td>10.5M VNĐ</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Bánh tiramisu</td>
+                                    <td>89</td>
+                                    <td>40.1M VNĐ</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('section-c').innerHTML = `
+                <div class="section-title">
+                    ⚡ Báo cáo nhanh
+                    <button class="btn btn-primary" onclick="scheduleReport()">⏰ Lập lịch</button>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn btn-primary" onclick="generateDailyReport()" style="width: 100%;">📅 Báo cáo ngày</button>
+                    <button class="btn btn-success" onclick="generateWeeklyReport()" style="width: 100%;">📊 Báo cáo tuần</button>
+                    <button class="btn btn-warning" onclick="generateMonthlyReport()" style="width: 100%;">📈 Báo cáo tháng</button>
+                    <button class="btn btn-danger" onclick="generateInventoryReport()" style="width: 100%;">📦 Báo cáo tồn kho</button>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">📋 Báo cáo đã tạo</h4>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <div>
+                                <div style="font-weight: 500;">Báo cáo doanh thu tháng 8</div>
+                                <div style="font-size: 0.8em; color: #718096;">09/08/2025 - 10:30</div>
+                            </div>
+                            <button class="btn btn-primary" onclick="downloadReport('revenue_aug')">📥</button>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <div>
+                                <div style="font-weight: 500;">Báo cáo tồn kho tuần 32</div>
+                                <div style="font-size: 0.8em; color: #718096;">05/08/2025 - 14:15</div>
+                            </div>
+                            <button class="btn btn-primary" onclick="downloadReport('inventory_w32')">📥</button>
+                        </div>
+                        <div style="display

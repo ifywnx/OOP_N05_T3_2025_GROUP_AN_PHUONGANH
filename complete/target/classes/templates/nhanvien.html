@@ -3,792 +3,579 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Tiệm Bánh</title>
+    <title>Ứng Dụng Quản Lý Tiệm Bánh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ffc107;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
         }
-
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Navigation Styles */
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--primary-color), #1a365d);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-bottom: 3px solid var(--accent-color);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.8rem;
+            color: white !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-weight: 500;
+            margin: 0 15px;
+            transition: all 0.3s ease;
+            border-radius: 25px;
+            padding: 10px 20px !important;
+            position: relative;
             overflow: hidden;
         }
-
-        .container {
+        
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .navbar-nav .nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            background-color: var(--accent-color);
+            color: var(--primary-color) !important;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+        
+        /* Main Layout Container */
+        .main-container {
+            height: calc(100vh - 100px);
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            padding: 10px;
-            gap: 10px;
-        }
-
-        /* Thanh công cụ phía trên */
-        .toolbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 15px 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 80px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .toolbar-left {
-            display: flex;
-            align-items: center;
             gap: 20px;
         }
-
-        .logo {
+        
+        /* Section A - Top Area */
+        .section-a {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            color: white;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            flex: 1;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.2);
         }
-
-        .logo h1 {
-            color: #4a5568;
-            font-size: 1.8em;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        
+        .section-a::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 4s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        /* Section B & C Container */
+        .section-bc-container {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 300px;
+        }
+        
+        .section-b,
+        .section-c {
+            flex: 1;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .section-b:hover,
+        .section-c:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .section-b {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .section-c {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        /* Content Styles */
+        .section-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
-        .toolbar-nav {
-            display: flex;
-            gap: 15px;
+        
+        .section-subtitle {
+            font-size: 1.4rem;
+            opacity: 0.95;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
-
-        .nav-btn {
-            padding: 10px 20px;
-            border: none;
-            background: transparent;
-            color: #4a5568;
-            font-weight: 500;
-            border-radius: 8px;
-            cursor: pointer;
+        
+        .section-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .section-icon {
+            font-size: 5rem;
+            margin-bottom: 25px;
+            animation: float 3s ease-in-out infinite;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* Button Styles */
+        .btn-custom {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-weight: bold;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            backdrop-filter: blur(10px);
+            font-size: 1rem;
+            margin: 5px;
         }
-
-        .nav-btn:hover, .nav-btn.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        
+        .btn-custom:hover {
+            background: rgba(255,255,255,0.4);
+            border-color: rgba(255,255,255,0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
-
-        .toolbar-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .search-input {
-            padding: 8px 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 20px;
-            width: 250px;
-            font-size: 0.9em;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #4a5568;
-            font-weight: 500;
-        }
-
-        /* Layout chính với 3 khu vực */
-        .main-layout {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 10px;
-            min-height: 0;
-        }
-
-        /* Khu vực A - chiếm toàn bộ hàng trên */
-        .section-a {
-            grid-column: 1 / 3;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            overflow: auto;
-        }
-
-        /* Khu vực B - dưới trái */
-        .section-b {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            overflow: auto;
-        }
-
-        /* Khu vực C - dưới phải */
-        .section-c {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            overflow: auto;
-        }
-
-        .section-title {
-            font-size: 1.5em;
-            color: #2d3748;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .section-label {
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-
-        /* Thống kê dashboard */
+        
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 20px;
-            margin-bottom: 25px;
+            margin: 30px 0;
         }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
+        
+        .stats-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 25px 15px;
             text-align: center;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
-            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
         }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
+        
+        .stats-card:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-5px);
         }
-
-        .stat-number {
-            font-size: 2em;
+        
+        .stats-number {
+            font-size: 2.8rem;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            color: var(--accent-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
-
-        .stat-label {
-            font-size: 0.9em;
+        
+        .stats-label {
+            font-size: 1.1rem;
             opacity: 0.9;
-        }
-
-        /* Bảng dữ liệu */
-        .table-container {
-            overflow-x: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        th {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9em;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 0.9em;
-        }
-
-        tr:hover {
-            background-color: #f7fafc;
-        }
-
-        /* Nút hành động */
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
             font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            margin: 2px;
         }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
+        
+        /* Management Cards */
+        .management-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
         }
-
-        .btn-success {
-            background: linear-gradient(45deg, #48bb78, #38a169);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(45deg, #ed8936, #dd6b20);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(45deg, #f56565, #e53e3e);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Biểu đồ đơn giản */
-        .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-
-        .chart-title {
+        
+        .management-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 25px;
             text-align: center;
-            margin-bottom: 20px;
-            color: #4a5568;
-            font-weight: 600;
-        }
-
-        .chart-bars {
-            display: flex;
-            align-items: end;
-            justify-content: space-around;
-            height: 150px;
-            margin: 20px 0;
-        }
-
-        .chart-bar {
-            background: linear-gradient(to top, #667eea, #764ba2);
-            width: 30px;
-            border-radius: 4px 4px 0 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
             transition: all 0.3s ease;
             cursor: pointer;
         }
-
-        .chart-bar:hover {
-            transform: scaleY(1.1);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        
+        .management-card:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-5px);
         }
-
-        /* Danh sách hoạt động */
-        .activity-list {
-            max-height: 200px;
-            overflow-y: auto;
+        
+        .management-card i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--accent-color);
         }
-
-        .activity-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #e2e8f0;
+        
+        .management-card h4 {
+            margin-bottom: 10px;
+            font-weight: bold;
         }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-info {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-weight: 500;
-            color: #2d3748;
-            margin-bottom: 3px;
-        }
-
-        .activity-time {
-            font-size: 0.8em;
-            color: #718096;
-        }
-
-        .activity-value {
-            font-weight: 600;
-            color: #667eea;
-        }
-
-        /* Responsive */
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .container {
-                padding: 5px;
-            }
-            
-            .toolbar {
-                flex-direction: column;
-                height: auto;
-                gap: 10px;
+            .main-container {
                 padding: 15px;
+                gap: 15px;
             }
             
-            .toolbar-nav {
-                flex-wrap: wrap;
-                justify-content: center;
+            .section-bc-container {
+                flex-direction: column;
+                gap: 15px;
             }
             
-            .search-input {
-                width: 200px;
+            .section-title {
+                font-size: 2.5rem;
             }
             
-            .main-layout {
+            .section-icon {
+                font-size: 3.5rem;
+            }
+            
+            .section-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-description {
+                font-size: 1rem;
+            }
+            
+            .navbar-nav .nav-link {
+                margin: 5px 0;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .management-grid {
                 grid-template-columns: 1fr;
-                grid-template-rows: auto auto auto;
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .section-content {
+                padding: 20px;
             }
             
-            .section-a {
-                grid-column: 1;
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
-        }
-
-        /* Animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section-a, .section-b, .section-c {
-            animation: fadeInUp 0.6s ease-out;
-            position: relative;
-        }
-
-        .section-b {
-            animation-delay: 0.1s;
-        }
-
-        .section-c {
-            animation-delay: 0.2s;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Thanh công cụ phía trên -->
-        <div class="toolbar">
-            <div class="toolbar-left">
-                <div class="logo">
-                    <span style="font-size: 1.5em;">🧁</span>
-                    <h1>Quản lý Tiệm Bánh</h1>
-                </div>
-                <nav class="toolbar-nav">
-                    <button class="nav-btn active" onclick="switchContent('dashboard')">📊 Tổng quan</button>
-                    <button class="nav-btn" onclick="switchContent('products')">🍰 Sản phẩm</button>
-                    <button class="nav-btn" onclick="switchContent('orders')">📋 Đơn hàng</button>
-                    <button class="nav-btn" onclick="switchContent('customers')">👥 Khách hàng</button>
-                    <button class="nav-btn" onclick="switchContent('reports')">📈 Báo cáo</button>
-                </nav>
-            </div>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showHome()">
+                <i class="fas fa-birthday-cake me-2"></i>
+                Quản Lý Tiệm Bánh
+            </a>
             
-            <div class="toolbar-right">
-                <input type="text" class="search-input" placeholder="🔍 Tìm kiếm...">
-                <div class="user-info">
-                    <span>👤</span>
-                    <span>Admin</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav" style="border-color: white;">
+                <span class="navbar-toggler-icon" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 30 30%22><path stroke=%22rgba%28255,255,255,1%29%22 stroke-linecap=%22round%22 stroke-miterlimit=%2210%22 stroke-width=%222%22 d=%22M4 7h22M4 15h22M4 23h22%22/></svg>');"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showHome()">
+                            <i class="fas fa-home me-1"></i> Trang Chủ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showKhachHang()">
+                            <i class="fas fa-users me-1"></i> Khách Hàng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSanPham()">
+                            <i class="fas fa-cookie-bite me-1"></i> Sản Phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showGiaoDich()">
+                            <i class="fas fa-cash-register me-1"></i> Giao Dịch
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showNhanVien()">
+                            <i class="fas fa-user-tie me-1"></i> Nhân Viên
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="main-container">
+        <!-- Section A - Top Full Width -->
+        <div class="section-a">
+            <div class="section-content">
+                <div class="section-icon">
+                    <i class="fas fa-birthday-cake"></i>
+                </div>
+                <h1 class="section-title">A</h1>
+                <h2 class="section-subtitle">Chào Mừng Đến Với Hệ Thống Quản Lý Tiệm Bánh</h2>
+                <p class="section-description">Hệ thống quản lý hiện đại, toàn diện cho tiệm bánh của bạn</p>
+                
+                <div class="stats-grid">
+                    <div class="stats-card">
+                        <div class="stats-number">150+</div>
+                        <div class="stats-label">Sản Phẩm</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number">500+</div>
+                        <div class="stats-label">Khách Hàng</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number">25</div>
+                        <div class="stats-label">Nhân Viên</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number">1000+</div>
+                        <div class="stats-label">Giao Dịch</div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button class="btn btn-custom" onclick="showBaoCao()">
+                        <i class="fas fa-chart-line me-2"></i>Xem Báo Cáo
+                    </button>
+                    <button class="btn btn-custom" onclick="showThemMoi()">
+                        <i class="fas fa-plus me-2"></i>Thêm Mới
+                    </button>
                 </div>
             </div>
         </div>
-
-        <!-- Layout chính với 3 khu vực -->
-        <div class="main-layout">
-            <!-- Khu vực A - Dashboard/Thống kê -->
-            <div class="section-a" id="section-a">
-                <div class="section-title">
-                    📊 Dashboard - Tổng quan hệ thống
-                    <button class="btn btn-primary">+ Tạo mới</button>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-orders">156</div>
-                        <div class="stat-label">Đơn hàng hôm nay</div>
+        
+        <!-- Section B & C Container -->
+        <div class="section-bc-container">
+            <!-- Section B - Bottom Left -->
+            <div class="section-b">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <i class="fas fa-chart-pie"></i>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-revenue">2.4M</div>
-                        <div class="stat-label">Doanh thu (VNĐ)</div>
+                    <h2 class="section-title">B</h2>
+                    <h3 class="section-subtitle">Thống Kê & Phân Tích</h3>
+                    <p class="section-description">Theo dõi doanh thu, lợi nhuận và hiệu suất kinh doanh realtime</p>
+                    
+                    <div class="management-grid">
+                        <div class="management-card" onclick="showDoanhThu()">
+                            <i class="fas fa-dollar-sign"></i>
+                            <h4>Doanh Thu</h4>
+                            <p>Theo dõi doanh thu</p>
+                        </div>
+                        <div class="management-card" onclick="showBaoCaoChiTiet()">
+                            <i class="fas fa-file-chart-pie"></i>
+                            <h4>Báo Cáo</h4>
+                            <p>Báo cáo chi tiết</p>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-products">89</div>
-                        <div class="stat-label">Sản phẩm</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-customers">234</div>
-                        <div class="stat-label">Khách hàng</div>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">📈 Doanh thu 7 ngày gần đây</div>
-                    <div class="chart-bars">
-                        <div class="chart-bar" style="height: 60%" title="Thứ 2: 1.2M"></div>
-                        <div class="chart-bar" style="height: 45%" title="Thứ 3: 900K"></div>
-                        <div class="chart-bar" style="height: 80%" title="Thứ 4: 1.6M"></div>
-                        <div class="chart-bar" style="height: 65%" title="Thứ 5: 1.3M"></div>
-                        <div class="chart-bar" style="height: 90%" title="Thứ 6: 1.8M"></div>
-                        <div class="chart-bar" style="height: 75%" title="Thứ 7: 1.5M"></div>
-                        <div class="chart-bar" style="height: 95%" title="Chủ nhật: 1.9M"></div>
-                    </div>
+                    
+                    <button class="btn btn-custom mt-3" onclick="showThongKe()">
+                        <i class="fas fa-external-link-alt me-2"></i>Xem Thống Kê
+                    </button>
                 </div>
             </div>
-
-            <!-- Khu vực B - Sản phẩm/Dữ liệu chính -->
-            <div class="section-b" id="section-b">
-                <div class="section-title">
-                    🍰 Sản phẩm nổi bật
-                    <button class="btn btn-success">+ Thêm</button>
-                </div>
-                
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tên sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Kho</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Bánh kem dâu tây</td>
-                                <td>350,000 VNĐ</td>
-                                <td>25</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Cupcake chocolate</td>
-                                <td>45,000 VNĐ</td>
-                                <td>48</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bánh mì sandwich</td>
-                                <td>35,000 VNĐ</td>
-                                <td>12</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bánh quy bơ</td>
-                                <td>25,000 VNĐ</td>
-                                <td>36</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bánh tiramisu</td>
-                                <td>450,000 VNĐ</td>
-                                <td>8</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Khu vực C - Hoạt động/Thông báo -->
-            <div class="section-c" id="section-c">
-                <div class="section-title">
-                    🔔 Hoạt động gần đây
-                    <button class="btn btn-primary">Xem tất cả</button>
-                </div>
-                
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Đơn hàng mới #1001</div>
-                            <div class="activity-time">10:30 - Nguyễn Văn A</div>
+            
+            <!-- Section C - Bottom Right -->
+            <div class="section-c">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h2 class="section-title">C</h2>
+                    <h3 class="section-subtitle">Quản Lý & Cài Đặt</h3>
+                    <p class="section-description">Cấu hình hệ thống, phân quyền và quản lý toàn bộ ứng dụng</p>
+                    
+                    <div class="management-grid">
+                        <div class="management-card" onclick="showCaiDat()">
+                            <i class="fas fa-tools"></i>
+                            <h4>Cài Đặt</h4>
+                            <p>Cấu hình hệ thống</p>
                         </div>
-                        <div class="activity-value">450,000 VNĐ</div>
+                        <div class="management-card" onclick="showPhanQuyen()">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Phân Quyền</h4>
+                            <p>Quản lý quyền hạn</p>
+                        </div>
                     </div>
                     
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Thanh toán đơn #0998</div>
-                            <div class="activity-time">10:15 - Trần Thị B</div>
-                        </div>
-                        <div class="activity-value">320,000 VNĐ</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Khách hàng mới đăng ký</div>
-                            <div class="activity-time">09:45 - Lê Văn C</div>
-                        </div>
-                        <div class="activity-value">+1 KH</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Nhập kho bánh kem</div>
-                            <div class="activity-time">09:30 - Kho hàng</div>
-                        </div>
-                        <div class="activity-value">+50 SP</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Sản phẩm sắp hết</div>
-                            <div class="activity-time">09:00 - Hệ thống</div>
-                        </div>
-                        <div class="activity-value">⚠️ Cảnh báo</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Hoàn thành đơn #0995</div>
-                            <div class="activity-time">08:45 - Phạm Thị D</div>
-                        </div>
-                        <div class="activity-value">280,000 VNĐ</div>
-                    </div>
+                    <button class="btn btn-custom mt-3" onclick="showQuanLy()">
+                        <i class="fas fa-external-link-alt me-2"></i>Quản Lý Hệ Thống
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // API Configuration
-        const API_BASE = '/api';
-        
-        // Chuyển đổi nội dung theo tab
-        function switchContent(contentType) {
-            // Update active navigation button
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            const sectionA = document.getElementById('section-a');
-            const sectionB = document.getElementById('section-b');
-            const sectionC = document.getElementById('section-c');
-            
-            // Clear current content
-            sectionA.innerHTML = '';
-            sectionB.innerHTML = '';
-            sectionC.innerHTML = '';
-            
-            switch(contentType) {
-                case 'dashboard':
-                    loadDashboardContent();
-                    break;
-                case 'products':
-                    loadProductsContent();
-                    break;
-                case 'orders':
-                    loadOrdersContent();
-                    break;
-                case 'customers':
-                    loadCustomersContent();
-                    break;
-                case 'reports':
-                    loadReportsContent();
-                    break;
-            }
+        // Navigation functions
+        function setActiveNav(element) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            element.classList.add('active');
         }
-        
-        function loadDashboardContent() {
-            document.getElementById('section-a').innerHTML = `
-                <div class="section-title">
-                    📊 Dashboard - Tổng quan hệ thống
-                    <button class="btn btn-primary">+ Tạo mới</button>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">156</div>
-                        <div class="stat-label">Đơn hàng hôm nay</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">2.4M</div>
-                        <div class="stat-label">Doanh thu (VNĐ)</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">89</div>
-                        <div class="stat-label">Sản phẩm</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">234</div>
-                        <div class="stat-label">Khách hàng</div>
-                    </div>
-                </div>
 
-                <div class="chart-container">
-                    <div class="chart-title">📈 Doanh thu 7 ngày gần đây</div>
-                    <div class="chart-bars">
-                        <div class="chart-bar" style="height: 60%" title="Thứ 2: 1.2M"></div>
-                        <div class="chart-bar" style="height: 45%" title="Thứ 3: 900K"></div>
-                        <div class="chart-bar" style="height: 80%" title="Thứ 4: 1.6M"></div>
-                        <div class="chart-bar" style="height: 65%" title="Thứ 5: 1.3M"></div>
-                        <div class="chart-bar" style="height: 90%" title="Thứ 6: 1.8M"></div>
-                        <div class="chart-bar" style="height: 75%" title="Thứ 7: 1.5M"></div>
-                        <div class="chart-bar" style="height: 95%" title="Chủ nhật: 1.9M"></div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('section-b').innerHTML = `
-                <div class="section-title">
-                    🍰 Sản phẩm nổi bật
-                    <button class="btn btn-success">+ Thêm</button>
-                </div>
-                
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tên sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Kho</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Bánh kem dâu tây</td>
-                                <td>350,000 VNĐ</td>
-                                <td>25</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Cupcake chocolate</td>
-                                <td>45,000 VNĐ</td>
-                                <td>48</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bánh mì sandwich</td>
-                                <td>35,000 VNĐ</td>
-                                <td>12</td>
-                                <td>
-                                    <button class="btn btn-warning">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
-            document.getElementById('section-c').innerHTML = `
-                <div class="section-title">
-                    🔔 Hoạt động gần đây
-                    <button class="btn btn-primary">Xem tất cả</button>
-                </div>
-                
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Đơn hàng mới #1001</div>
-                            <div class="activity-time">10:30 - Nguyễn Văn A</div>
-                        </div>
-                        <div class="activity-value">450,000 VNĐ</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Thanh toán đơn #0998</div>
-                            <div class="activity-time">10:15 - Trần Thị B</div>
-                        </div>
-                        <div class="activity-value">320,000 VNĐ</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Khách hàng mới đăng ký</div>
-                            <div class="activity-time">09:45 - Lê Văn C</div>
-                        </div>
-                        <div class="activity-value">+1 KH</div>
-                    </div>
-                </div>
-            `;
+        function showHome() {
+            setActiveNav(event.target);
+            alert('Đang ở trang chủ');
         }
-        
-        function loadProductsContent() {
-            document.getElementById('section-a').innerHTML = `
-                <div class="section-title">
-                    🍰 Quản lý Sản phẩm
-                    <button class="btn btn-primary" onclick="alert('Thêm sản phẩm mới')">+ Thêm sản phẩm</button>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">89</div>
-                        <div class="stat-label">Tổng sản phẩm</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">Sản phẩm hot
+
+        function showKhachHang() {
+            setActiveNav(event.target);
+            alert('Chuyển đến trang Quản lý Khách hàng');
+        }
+
+        function showSanPham() {
+            setActiveNav(event.target);
+            alert('Chuyển đến trang Quản lý Sản phẩm');
+        }
+
+        function showGiaoDich() {
+            setActiveNav(event.target);
+            alert('Chuyển đến trang Quản lý Giao dịch');
+        }
+
+        function showNhanVien() {
+            setActiveNav(event.target);
+            alert('Chuyển đến trang Quản lý Nhân viên');
+        }
+
+        // Action functions
+        function showBaoCao() {
+            alert('Hiển thị báo cáo tổng quan');
+        }
+
+        function showThemMoi() {
+            alert('Mở form thêm mới');
+        }
+
+        function showDoanhThu() {
+            alert('Hiển thị thống kê doanh thu');
+        }
+
+        function showBaoCaoChiTiet() {
+            alert('Hiển thị báo cáo chi tiết');
+        }
+
+        function showThongKe() {
+            alert('Chuyển đến trang thống kê');
+        }
+
+        function showCaiDat() {
+            alert('Mở trang cài đặt hệ thống');
+        }
+
+        function showPhanQuyen() {
+            alert('Mở trang phân quyền');
+        }
+
+        function showQuanLy() {
+            alert('Chuyển đến trang quản lý hệ thống');
+        }
+
+        // Auto-resize for mobile
+        window.addEventListener('resize', function() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        });
+    </script>
+</body>
+</html>
