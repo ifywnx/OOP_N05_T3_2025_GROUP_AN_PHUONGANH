@@ -1,10 +1,12 @@
-public class KhachHang {
+public class Khachhang {
+
     private String tenKhachHang;
     private String maKhachHang;
     private String diaChi;
     private String soDienThoai;
 
-    public KhachHang() {}
+    public Khachhang() {
+    }
 
     public String getTenKhachHang() {
         return tenKhachHang;
