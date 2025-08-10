@@ -1,69 +1,153 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Quản lý tiệm bánh</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-        .card {
-            background: white;
-            padding: 20px;
-            margin: 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            flex: 1;
-            min-width: 180px;
-            text-align: center;
-        }
-        .card h2 {
-            margin: 0;
-            color: #ff6600;
-        }
-        .card p {
-            font-size: 18px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — Old Money Luxe</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div class="cm-app">
 
-<h1>📊 Dashboard - Quản lý tiệm bánh</h1>
+  <!-- NAVBAR (full width) -->
+  <header class="cm-nav">
+    <div class="cm-brand">
+      <div class="cm-brand-logo"></div>
+      <div class="cm-brand-title">Maison Pâtisserie</div>
+    </div>
 
-<div class="stats">
-    <div class="card">
-        <h2 th:text="${tongSanPham}">0</h2>
-        <p>Sản phẩm</p>
+    <nav class="cm-navlinks">
+      <a class="cm-link is-active" th:href="@{/}">📊 Tổng quan</a>
+      <a class="cm-link" th:href="@{/sanpham}">🍰 Sản phẩm</a>
+      <a class="cm-link" th:href="@{/giaodich}">📋 Giao dịch</a>
+      <a class="cm-link" th:href="@{/khachhang}">👥 Khách hàng</a>
+      <a class="cm-link" th:href="@{/nhanvien}">👨‍🍳 Nhân viên</a>
+    </nav>
+
+    <div class="cm-right">
+      <input class="cm-search" placeholder="Tìm nhanh…">
+      <div class="cm-user">👤 Admin</div>
     </div>
-    <div class="card">
-        <h2 th:text="${tongKhachHang}">0</h2>
-        <p>Khách hàng</p>
-    </div>
-    <div class="card">
-        <h2 th:text="${tongNhanVien}">0</h2>
-        <p>Nhân viên</p>
-    </div>
-    <div class="card">
-        <h2 th:text="${tongGiaoDich}">0</h2>
-        <p>Giao dịch</p>
-    </div>
-    <div class="card">
-        <h2 th:text="${sapHet}">0</h2>
-        <p>Sản phẩm sắp hết</p>
-    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <main class="cm-main">
+
+    <!-- A: Full width -->
+    <section class="cm-card cm-a">
+      <div class="cm-sec-head">
+        <div class="cm-sec-title">Tổng quan hôm nay</div>
+        <div class="cm-actions">
+          <a class="cm-btn primary" href="#" onclick="location.reload()">🔄 Làm mới</a>
+        </div>
+      </div>
+
+      <!-- KPI -->
+      <div class="cm-kpis">
+        <div class="cm-kpi">
+          <div class="kpi-label">Đơn hàng</div>
+          <div class="kpi-value" th:text="${kpiDonHang != null ? kpiDonHang : 156}">156</div>
+          <div class="kpi-sub">So với hôm qua: +6%</div>
+        </div>
+        <div class="cm-kpi">
+          <div class="kpi-label">Doanh thu (VNĐ)</div>
+          <div class="kpi-value" th:text="${kpiDoanhThu != null ? kpiDoanhThu : '2.4M'}">2.4M</div>
+          <div class="kpi-sub">Bình quân/đơn: 154k</div>
+        </div>
+        <div class="cm-kpi">
+          <div class="kpi-label">Sản phẩm</div>
+          <div class="kpi-value" th:text="${kpiSanPham != null ? kpiSanPham : 89}">89</div>
+          <div class="kpi-sub">Còn hàng: 92%</div>
+        </div>
+        <div class="cm-kpi">
+          <div class="kpi-label">Khách hàng</div>
+          <div class="kpi-value" th:text="${kpiKhachHang != null ? kpiKhachHang : 234}">234</div>
+          <div class="kpi-sub">Mới hôm nay: 12</div>
+        </div>
+      </div>
+
+      <!-- Mini chart (no lib) -->
+      <div class="cm-bars" aria-label="Doanh thu 7 ngày gần đây">
+        <div class="cm-bar" style="height:62%"></div>
+        <div class="cm-bar" style="height:48%"></div>
+        <div class="cm-bar" style="height:78%"></div>
+        <div class="cm-bar" style="height:65%"></div>
+        <div class="cm-bar" style="height:90%"></div>
+        <div class="cm-bar" style="height:72%"></div>
+        <div class="cm-bar" style="height:96%"></div>
+      </div>
+    </section>
+
+    <!-- B: 50% left -->
+    <section class="cm-card">
+      <div class="cm-sec-head">
+        <div class="cm-sec-title">Sản phẩm nổi bật</div>
+        <div class="cm-actions">
+          <a class="cm-btn success" th:href="@{/sanpham/add}">+ Thêm</a>
+          <a class="cm-btn" th:href="@{/sanpham}">Xem tất cả</a>
+        </div>
+      </div>
+
+      <div class="cm-table-wrap">
+        <table class="cm-table">
+          <thead>
+          <tr>
+            <th>Tên SP</th><th>Giá</th><th>Kho</th><th>Trạng thái</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Bánh Opera</td><td>85.000</td><td>32</td>
+            <td><span class="cm-badge badge-ok">Còn hàng</span></td>
+          </tr>
+          <tr>
+            <td>Macaron (hộp 6)</td><td>120.000</td><td>14</td>
+            <td><span class="cm-badge badge-warn">Sắp hết</span></td>
+          </tr>
+          <tr>
+            <td>Éclair Chocolate</td><td>45.000</td><td>48</td>
+            <td><span class="cm-badge badge-ok">Còn hàng</span></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- C: 50% right -->
+    <section class="cm-card">
+      <div class="cm-sec-head">
+        <div class="cm-sec-title">Hoạt động gần đây</div>
+        <div class="cm-actions">
+          <a class="cm-btn" th:href="@{/giaodich}">Tới giao dịch</a>
+        </div>
+      </div>
+
+      <div class="cm-actlist">
+        <div class="cm-act">
+          <div>
+            <div class="t">Đơn #1021 • Thanh toán</div>
+            <div class="s">10:25 — Trần Minh</div>
+          </div>
+          <div class="t">420.000</div>
+        </div>
+        <div class="cm-act">
+          <div>
+            <div class="t">Nhập kho Macaron</div>
+            <div class="s">09:40 — Kho chính</div>
+          </div>
+          <div class="t">+60 SP</div>
+        </div>
+        <div class="cm-act">
+          <div>
+            <div class="t">Khách hàng mới</div>
+            <div class="s">09:05 — Lê Lan</div>
+          </div>
+          <div class="t">+1 KH</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
 </div>
-
 </body>
 </html>
