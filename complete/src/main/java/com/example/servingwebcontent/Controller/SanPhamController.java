@@ -1,67 +1,47 @@
-package com.cakeshop.app.controller;
+package com.example.servingwebcontent.controller;
 
-import com.cakeshop.app.model.SanPham;
-import com.cakeshop.app.repo.SanPhamRepo;
+import com.example.servingwebcontent.model.SanPham;
+import com.example.servingwebcontent.service.SanPhamService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/san-pham")
+@RequestMapping("/sanpham")
 public class SanPhamController {
-    private final SanPhamRepo repo;
+    private final SanPhamService service;
 
-    public SanPhamController(SanPhamRepo repo) {
-        this.repo = repo;
+    public SanPhamController(SanPhamService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public String list(Model model,
-                       @RequestParam(value="q", required=false) String q) {
-        model.addAttribute("items",
-                (q == null || q.isBlank()) ? repo.findAll() : repo.searchByKeyword(q));
-        model.addAttribute("q", q);
-        return "sanpham-list";
+    public String list(Model model) {
+        model.addAttribute("dsSanPham", service.findAll());
+        return "sanpham/list";
     }
 
-    @GetMapping("/tao")
-    public String createForm(Model model) {
-        model.addAttribute("sp", new SanPham());
-        model.addAttribute("mode", "create");
-        return "sanpham-form";
+    @GetMapping("/add")
+    public String addForm(Model model) {
+        model.addAttribute("sanPham", new SanPham());
+        return "sanpham/form";
     }
 
-    @PostMapping("/tao")
-    public String create(@ModelAttribute("sp") SanPham sp, Model model) {
-        if (repo.exists(sp.getMaSanPham())) {
-            model.addAttribute("sp", sp);
-            model.addAttribute("mode", "create");
-            model.addAttribute("error", "Ma san pham da ton tai");
-            return "sanpham-form";
-        }
-        repo.save(sp);
-        return "redirect:/san-pham";
+    @PostMapping("/save")
+    public String save(@ModelAttribute("sanPham") SanPham sp) {
+        service.save(sp);
+        return "redirect:/sanpham";
     }
 
-    @GetMapping("/sua/{ma}")
-    public String editForm(@PathVariable String ma, Model model) {
-        SanPham sp = repo.findById(ma);
-        if (sp == null) return "redirect:/san-pham";
-        model.addAttribute("sp", sp);
-        model.addAttribute("mode", "edit");
-        return "sanpham-form";
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model) {
+        model.addAttribute("sanPham", service.findById(id));
+        return "sanpham/form";
     }
 
-    @PostMapping("/sua/{ma}")
-    public String edit(@PathVariable String ma, @ModelAttribute("sp") SanPham sp) {
-        sp.setMaSanPham(ma);
-        repo.save(sp);
-        return "redirect:/san-pham";
-    }
-
-    @PostMapping("/xoa/{ma}")
-    public String delete(@PathVariable String ma) {
-        repo.delete(ma);
-        return "redirect:/san-pham";
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        service.deleteById(id);
+        return "redirect:/sanpham";
     }
 }

@@ -1,68 +1,47 @@
-package com.cakeshop.app.controller;
+package com.example.servingwebcontent.controller;
 
-import com.cakeshop.app.model.NhanVien;
-import com.cakeshop.app.repo.NhanVienRepo;
+import com.example.servingwebcontent.model.KhachHang;
+import com.example.servingwebcontent.service.KhachHangService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/nhan-vien")
-public class NhanVienController {
+@RequestMapping("/khachhang")
+public class KhachHangController {
+    private final KhachHangService service;
 
-    private final NhanVienRepo repo;
-
-    public NhanVienController(NhanVienRepo repo) {
-        this.repo = repo;
+    public KhachHangController(KhachHangService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public String list(Model model,
-                       @RequestParam(value="q", required=false) String q) {
-        model.addAttribute("items",
-                (q == null || q.isBlank()) ? repo.findAll() : repo.searchByKeyword(q));
-        model.addAttribute("q", q);
-        return "nhanvien-list";
+    public String list(Model model) {
+        model.addAttribute("dsKhachHang", service.findAll());
+        return "khachhang/list";
     }
 
-    @GetMapping("/tao")
-    public String createForm(Model model) {
-        model.addAttribute("nv", new NhanVien());
-        model.addAttribute("mode", "create");
-        return "nhanvien-form";
+    @GetMapping("/add")
+    public String addForm(Model model) {
+        model.addAttribute("khachHang", new KhachHang());
+        return "khachhang/form";
     }
 
-    @PostMapping("/tao")
-    public String create(@ModelAttribute("nv") NhanVien nv, Model model) {
-        if (repo.exists(nv.getMaNhanVien())) {
-            model.addAttribute("nv", nv);
-            model.addAttribute("mode", "create");
-            model.addAttribute("error", "Ma nhan vien da ton tai");
-            return "nhanvien-form";
-        }
-        repo.save(nv);
-        return "redirect:/nhan-vien";
+    @PostMapping("/save")
+    public String save(@ModelAttribute("khachHang") KhachHang kh) {
+        service.save(kh);
+        return "redirect:/khachhang";
     }
 
-    @GetMapping("/sua/{ma}")
-    public String editForm(@PathVariable String ma, Model model) {
-        NhanVien nv = repo.findById(ma);
-        if (nv == null) return "redirect:/nhan-vien";
-        model.addAttribute("nv", nv);
-        model.addAttribute("mode", "edit");
-        return "nhanvien-form";
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model) {
+        model.addAttribute("khachHang", service.findById(id));
+        return "khachhang/form";
     }
 
-    @PostMapping("/sua/{ma}")
-    public String edit(@PathVariable String ma, @ModelAttribute("nv") NhanVien nv) {
-        nv.setMaNhanVien(ma);
-        repo.save(nv);
-        return "redirect:/nhan-vien";
-    }
-
-    @PostMapping("/xoa/{ma}")
-    public String delete(@PathVariable String ma) {
-        repo.delete(ma);
-        return "redirect:/nhan-vien";
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        service.deleteById(id);
+        return "redirect:/khachhang";
     }
 }

@@ -1,26 +1,47 @@
-package com.example.demo.controller;
+package com.example.servingwebcontent.controller;
 
-import com.example.demo.model.Nhanvien;
+import com.example.servingwebcontent.model.NhanVien;
+import com.example.servingwebcontent.service.NhanVienService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-public class NhanvienController {
+@RequestMapping("/nhanvien")
+public class NhanVienController {
+    private final NhanVienService service;
 
-    @GetMapping("/nhanvien")
-    public String hienThiNhanVien(Model model) {
-        Nhanvien nv1 = new Nhanvien("NV01", "Nguyễn Văn An", "Quảng Ninh", "0901234567");
-        Nhanvien nv2 = new Nhanvien("NV02", "Lê Thị Phương Anh", "Hải Phòng", "0987654321");
+    public NhanVienController(NhanVienService service) {
+        this.service = service;
+    }
 
-        ArrayList<Nhanvien> danhSach = new ArrayList<>();
-        danhSach.add(nv1);
-        danhSach.add(nv2);
+    @GetMapping
+    public String list(Model model) {
+        model.addAttribute("dsNhanVien", service.findAll());
+        return "nhanvien/list";
+    }
 
-        model.addAttribute("listNV", danhSach);
+    @GetMapping("/add")
+    public String addForm(Model model) {
+        model.addAttribute("nhanVien", new NhanVien());
+        return "nhanvien/form";
+    }
 
-        return "nhanvien"; // Trả về nhanvien.html
+    @PostMapping("/save")
+    public String save(@ModelAttribute("nhanVien") NhanVien nv) {
+        service.save(nv);
+        return "redirect:/nhanvien";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model) {
+        model.addAttribute("nhanVien", service.findById(id));
+        return "nhanvien/form";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        service.deleteById(id);
+        return "redirect:/nhanvien";
     }
 }

@@ -1,0 +1,26 @@
+:root {
+  --primary1: #8B4513;
+  --primary2: #A0522D;
+  --secondary1: #D2691E;
+  --secondary2: #CD853F;
+  --text-dark: #2F1B14;
+  --accent1: #6F4E37;
+  --accent2: #3C1810;
+}
+
+body {
+  background-color: var(--secondary2);
+  color: var(--text-dark);
+}
+
+.navbar {
+  background: linear-gradient(90deg, var(--primary1), var(--primary2));
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
