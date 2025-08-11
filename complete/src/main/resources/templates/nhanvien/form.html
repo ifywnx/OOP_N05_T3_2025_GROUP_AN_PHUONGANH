@@ -1,36 +1,49 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
-  <meta charset="UTF-8"><title>Lưu Nhân viên</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
-  <style>
-    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .form-item{display:flex;flex-direction:column;gap:6px}
-    .form-item input{padding:10px;border:1px solid var(--border);border-radius:10px;background:#FFF}
-  </style>
+  <meta charset="UTF-8"><title>💾 Nhân viên - Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-<div class="cm-app">
-  <header class="cm-nav">
-    <div class="cm-brand"><div class="cm-brand-logo"></div><div class="cm-brand-title">Nhân viên</div></div>
-  </header>
+<body class="bg-light">
+<div class="container mt-4">
+  <h2>💾 Lưu Nhân viên</h2>
 
-  <main class="cm-card">
-    <form th:action="@{/nhanvien/save}" th:object="${nhanVien}" method="post">
-      <input type="hidden" th:field="*{id}"/>
-      <div class="form-grid">
-        <div class="form-item"><label>Mã NV</label><input th:field="*{maNhanVien}" required></div>
-        <div class="form-item"><label>Họ tên</label><input th:field="*{tenNhanVien}" required></div>
-        <div class="form-item"><label>Địa chỉ</label><input th:field="*{diaChi}"></div>
-        <div class="form-item"><label>Điện thoại</label><input th:field="*{soDienThoai}"></div>
-        <div class="form-item"><label>Lương</label><input type="number" step="0.01" th:field="*{tienLuong}"></div>
+  <form th:action="@{/nhanvien/save}" th:object="${nhanVien}" method="post" class="card p-4">
+    <input type="hidden" th:field="*{id}">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Mã NV</label>
+        <input class="form-control" th:field="*{maNhanVien}">
+        <div class="text-danger small" th:errors="*{maNhanVien}"></div>
       </div>
-      <div style="margin-top:14px;display:flex;gap:8px">
-        <button class="cm-btn success" type="submit">💾 Lưu</button>
-        <a class="cm-btn" th:href="@{/nhanvien}">⬅ Quay lại</a>
+      <div class="col-md-4">
+        <label class="form-label">Tên</label>
+        <input class="form-control" th:field="*{tenNhanVien}">
+        <div class="text-danger small" th:errors="*{tenNhanVien}"></div>
       </div>
-    </form>
-  </main>
+      <div class="col-md-4">
+        <label class="form-label">SĐT</label>
+        <input class="form-control" th:field="*{soDienThoai}" placeholder="0XXXXXXXXX / +84XXXXXXXXX">
+        <div class="text-danger small" th:errors="*{soDienThoai}"></div>
+      </div>
+      <div class="col-md-8">
+        <label class="form-label">Địa chỉ</label>
+        <input class="form-control" th:field="*{diaChi}">
+        <div class="text-danger small" th:errors="*{diaChi}"></div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Tiền lương</label>
+        <input type="number" min="0" step="1000" class="form-control" th:field="*{tienLuong}">
+        <div class="text-danger small" th:errors="*{tienLuong}"></div>
+      </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+      <button class="btn btn-primary" type="submit">💾 Lưu</button>
+      <a th:href="@{/nhanvien}" class="btn btn-secondary">⬅ Quay lại</a>
+    </div>
+  </form>
 </div>
 </body>
 </html>

@@ -1,45 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
-  <meta charset="UTF-8"><title>Giao dịch</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta charset="UTF-8"><title>💳 Danh sách Giao dịch</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-<div class="cm-app">
-  <header class="cm-nav">
-    <div class="cm-brand"><div class="cm-brand-logo"></div><div class="cm-brand-title">Giao dịch</div></div>
-    <div class="cm-right">
-      <a class="cm-btn success" th:href="@{/giaodich/add}">+ Thêm</a>
-      <a class="cm-btn" th:href="@{/}">Trang chủ</a>
-    </div>
-  </header>
+<body class="bg-light">
+<div class="container mt-4">
+  <h2 class="mb-3">💳 Danh sách Giao dịch</h2>
 
-  <main class="cm-card">
-    <div class="cm-table-wrap">
-      <table class="cm-table">
-        <thead>
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+  <a th:href="@{/giaodich/add}" class="btn btn-primary mb-3">➕ Tạo giao dịch</a>
+
+  <div class="card p-2">
+    <div class="table-responsive">
+      <table class="table table-striped align-middle mb-0">
+        <thead class="table-dark">
         <tr>
-          <th>ID</th><th>Mã GD</th><th>Thời gian</th><th>SP</th><th>KH</th><th>NV</th><th>Tổng tiền</th><th>Hành động</th>
+          <th>#</th><th>Mã GD</th><th>Ngày</th><th>Giờ</th><th class="text-end">Tổng tiền</th><th></th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="gd : ${dsGiaoDich}">
-          <td th:text="${gd.id}">1</td>
-          <td th:text="${gd.maGiaoDich}">GD01</td>
-          <td th:text="${#temporals.format(gd.ngayGioGiaoDich, 'yyyy-MM-dd HH:mm')}">2025-08-10 10:00</td>
-          <td th:text="${gd.sanPham != null ? gd.sanPham.tenSanPham : '-'}">Opera</td>
-          <td th:text="${gd.khachHang != null ? gd.khachHang.tenKhachHang : '-'}">Lan</td>
-          <td th:text="${gd.nhanVien != null ? gd.nhanVien.tenNhanVien : '-'}">An</td>
-          <td th:text="${#numbers.formatDecimal(gd.tongTien,1,'DEFAULT',0,'DEFAULT')}">450000</td>
-          <td>
-            <a class="cm-btn" th:href="@{'/giaodich/edit/' + ${gd.id}}">Sửa</a>
-            <a class="cm-btn" th:href="@{'/giaodich/delete/' + ${gd.id}}" onclick="return confirm('Xóa giao dịch?')">Xóa</a>
+        <tr th:each="gd,i : ${dsGiaoDich}">
+          <td th:text="${i.count}">1</td>
+          <td th:text="${gd.maGiaoDich}">GD001</td>
+          <td th:text="${gd.ngayGiaoDich}">2025-08-11</td>
+          <td th:text="${gd.gioGiaoDich}">09:30</td>
+          <td class="text-end" th:text="${#numbers.formatDecimal(gd.tongTien,1,'DEFAULT',0,'DEFAULT')}">0</td>
+          <td class="text-nowrap">
+            <a th:href="@{'/giaodich/edit/' + ${gd.id}}" class="btn btn-warning btn-sm">✏ Sửa</a>
+            <a th:href="@{'/giaodich/delete/' + ${gd.id}}" class="btn btn-danger btn-sm"
+               onclick="return confirm('Xóa giao dịch này?')">🗑 Xóa</a>
           </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(dsGiaoDich)}">
+          <td colspan="6" class="text-center text-muted">Chưa có giao dịch</td>
         </tr>
         </tbody>
       </table>
     </div>
-  </main>
+  </div>
 </div>
 </body>
 </html>

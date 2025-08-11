@@ -1,151 +1,99 @@
-/* =========================
-   OLD MONEY LUXE THEME 🍂
-   ========================= */
+/* ===== Soft Pastels – Bakery UI ===== */
 :root{
-  --om-walnut:#5B4636;        /* primary deep brown */
-  --om-khaki:#8B7355;         /* warm khaki */
-  --om-linen:#EDE6D6;         /* linen */
-  --om-ivory:#F5F0E6;         /* ivory cream */
-  --om-charcoal:#2C2C2C;      /* charcoal */
-  --om-taupe:#4B3F35;         /* dark taupe (text) */
-  --om-gold:#C5A572;          /* antique gold (accent) */
-  --om-bronze:#A38F7B;        /* muted bronze (accent) */
+  --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --radius: 14px;
+  --shadow-sm: 0 4px 14px rgba(248, 187, 208, .25);   /* hồng nhạt */
+  --shadow-md: 0 10px 30px rgba(165, 214, 167, .28);  /* xanh bạc hà */
+  --speed: 180ms;
 
-  --bg-body: var(--om-ivory);
-  --bg-card: #FBF8F1;         /* slightly lighter than linen */
-  --border:#E3DAC7;           /* soft border */
-  --shadow: 0 10px 24px rgba(48, 37, 25, .08);
+  /* Bảng màu chính */
+  --pink: #F8BBD0;      /* hồng nhạt */
+  --cream: #FFF3E0;     /* be kem */
+  --mint: #C8E6C9;      /* xanh bạc hà */
+
+  /* Màu phụ */
+  --light-pink: #FCE4EC;
+  --warm-cream: #FFF8E1;
+  --sage: #A5D6A7;
+  --mint-light: #E8F5E8;
+
+  /* Ánh xạ semantic */
+  --bg: var(--cream);
+  --card: #FFFFFF;
+  --text: #263238;
+  --muted: #6b7280;
+  --border: #F1E9DD;
+  --primary: var(--pink);
+  --primary-contrast: #4a4a4a; /* chữ trên nền hồng nhạt */
+  --accent: var(--mint);
 }
 
-/* Reset nhỏ gọn */
-*{box-sizing:border-box;margin:0;padding:0}
+/* ===== Base ===== */
+*{box-sizing:border-box}
 html,body{height:100%}
 body{
-  font: 500 16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  color:var(--om-taupe);
-  background:
-    linear-gradient(180deg, rgba(197,165,114,.08), transparent 40%),
-    var(--bg-body);
+  font-family: var(--font);
+  color: var(--text);
+  background: linear-gradient(160deg, var(--cream) 0%, #FAEDE3 40%, #FADBE7 70%, #EAF6EA 100%);
+  background-attachment: fixed;
+  transition: background var(--speed) ease, color var(--speed) ease;
+}
+.container, .card, .navbar{border-radius: var(--radius)}
+
+/* ===== Navbar: gradient hồng nhạt mềm ===== */
+.navbar{
+  background: linear-gradient(90deg, var(--pink) 0%, #FADBE7 60%, #FDEAF2 100%) !important;
+  box-shadow: var(--shadow-sm);
+}
+.navbar .navbar-brand,
+.navbar .nav-link,
+.navbar .btn{ color: var(--primary-contrast) !important }
+
+/* ===== Card / Table ===== */
+.card{ background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-sm) }
+.table thead th{
+  background: linear-gradient(90deg, var(--mint) 0%, var(--sage) 100%);
+  color:#1b3a2a; border-color: transparent;
+}
+.table tbody tr:hover{ background: var(--warm-cream) }
+
+/* ===== Buttons ===== */
+.btn{ border-radius: 12px; transition: transform var(--speed) ease, opacity var(--speed) ease }
+.btn:active{ transform: translateY(1px) }
+
+.btn-primary{
+  background: linear-gradient(180deg, var(--pink) 0%, #F7A9C5 100%);
+  border: 0; color: var(--primary-contrast); box-shadow: var(--shadow-sm)
+}
+.btn-primary:hover{ opacity:.95 }
+
+.btn-accent{
+  background: linear-gradient(180deg, var(--mint) 0%, var(--sage) 100%);
+  border: 0; color:#0f3d2e; box-shadow: var(--shadow-md)
+}
+.btn-outline{
+  background: #fff; border:1px solid var(--mint-light); color:#345b4f;
+}
+.btn-outline:hover{ background: var(--mint-light) }
+
+/* ===== Forms ===== */
+.form-control, .form-select, input, textarea{
+  border:1px solid var(--mint-light);
+  border-radius: 12px; background:#fff;
+  transition: border-color var(--speed) ease, box-shadow var(--speed) ease;
+}
+.form-control:focus, .form-select:focus, input:focus, textarea:focus{
+  border-color: var(--pink);
+  box-shadow: 0 0 0 4px rgba(248, 187, 208, .25);
+  outline: 0;
+}
+.field-error{ border-color:#E57373 !important; box-shadow:0 0 0 4px rgba(229,115,115,.2) }
+
+/* ===== KPI Cards (gradient bạc hà) ===== */
+.kpi{
+  background: linear-gradient(160deg, var(--mint) 0%, var(--sage) 100%);
+  color:#0f3d2e; border:0; box-shadow: var(--shadow-md)
 }
 
-/* ===== App Shell ===== */
-.cm-app{min-height:100vh;display:flex;flex-direction:column;padding:16px;gap:16px}
-
-/* ===== NAVBAR (full width) ===== */
-.cm-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 20px;border-radius:16px;box-shadow:var(--shadow);
-  background:
-    linear-gradient(180deg, rgba(91,70,54,.12), rgba(91,70,54,.06)),
-    var(--om-linen);
-  border:1px solid var(--border);
-}
-.cm-brand{display:flex;align-items:center;gap:12px}
-.cm-brand-logo{
-  width:36px;height:36px;border-radius:10px;
-  background: radial-gradient(60% 60% at 50% 40%, var(--om-gold), var(--om-bronze));
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.08);
-}
-.cm-brand-title{
-  font-weight:700;letter-spacing:.3px;color:var(--om-walnut)
-}
-.cm-navlinks{display:flex;gap:8px;flex-wrap:wrap}
-.cm-link{
-  padding:8px 12px;border-radius:10px;text-decoration:none;
-  color:var(--om-taupe);border:1px solid transparent;
-}
-.cm-link:hover{border-color:var(--border);background-color:#F8F4EC}
-.cm-link.is-active{
-  color:var(--om-walnut);border-color:var(--om-gold);background:#FAF6EE
-}
-.cm-right{display:flex;gap:10px;align-items:center}
-.cm-search{
-  width:240px;max-width:40vw;padding:8px 12px;border-radius:10px;
-  border:1px solid var(--border);background:#FAF8F2;color:var(--om-taupe)
-}
-.cm-user{
-  display:flex;gap:10px;align-items:center;padding:8px 12px;border-radius:10px;
-  border:1px solid var(--border);background:#FAF6EE;color:var(--om-walnut);font-weight:600
-}
-
-/* ===== MAIN GRID: A (full) + B & C (50/50) ===== */
-.cm-main{
-  display:grid;gap:16px;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(160px, auto)
-}
-.cm-a{grid-column:1/3}
-.cm-card{
-  background:var(--bg-card);border:1px solid var(--border);border-radius:18px;
-  padding:18px;box-shadow:var(--shadow)
-}
-
-/* ===== Section header ===== */
-.cm-sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.cm-sec-title{font-weight:700;color:var(--om-walnut);letter-spacing:.2px}
-.cm-actions{display:flex;gap:8px}
-.cm-btn{
-  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
-  padding:9px 14px;border-radius:10px;border:1px solid var(--border);
-  background:#F8F4EC;color:var(--om-taupe);text-decoration:none;font-weight:600
-}
-.cm-btn:hover{background:#F3EEE5}
-.cm-btn.primary{
-  background:linear-gradient(180deg, #FBF6EA, #F2E9D9);
-  border-color:#E7D8BD;color:var(--om-walnut)
-}
-.cm-btn.success{
-  background:linear-gradient(180deg, #F4F0E6, #ECE4D6);
-  border-color:#DBCDB5;color:#3E3A2F
-}
-
-/* ===== A: KPI + chart hint ===== */
-.cm-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.cm-kpi{
-  background:#FFF; border:1px solid var(--border); border-radius:14px; padding:14px;
-  box-shadow: 0 6px 14px rgba(48,37,25,.06);
-}
-.cm-kpi .kpi-label{color:#7b6a57;font-size:12px;text-transform:uppercase;letter-spacing:.6px}
-.cm-kpi .kpi-value{color:var(--om-charcoal);font-size:26px;font-weight:800;margin-top:6px}
-.cm-kpi .kpi-sub{color:#87786A;font-size:12px;margin-top:4px}
-
-/* simple bar group (no external lib) */
-.cm-bars{display:flex;align-items:flex-end;gap:10px;height:140px;margin-top:14px}
-.cm-bar{
-  width:26px;border-radius:8px 8px 0 0;
-  background:linear-gradient(180deg, #D6C5A8, #BFA886);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.04), 0 2px 8px rgba(0,0,0,.06)
-}
-.cm-bar:hover{filter:brightness(1.04)}
-
-/* ===== B: table ===== */
-.cm-table-wrap{overflow:auto;border-radius:12px;border:1px solid var(--border)}
-.cm-table{width:100%;border-collapse:collapse;background:#FFF}
-.cm-table th{
-  text-align:left;padding:12px;background:#F5EFE3;color:#5b4a3a;font-weight:800;
-  position:sticky;top:0;border-bottom:1px solid var(--border)
-}
-.cm-table td{padding:12px;border-bottom:1px solid #EFE6D6}
-.cm-badge{
-  padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid;
-}
-.badge-ok{background:#F6F3EC;color:#4C402F;border-color:#D9CBB3}
-.badge-warn{background:#FCF7EA;color:#7A5A20;border-color:#E7D4A2}
-
-/* ===== C: activity list ===== */
-.cm-actlist{display:flex;flex-direction:column;gap:10px;max-height:360px;overflow:auto}
-.cm-act{
-  display:flex;justify-content:space-between;gap:10px;padding:12px;border:1px solid var(--border);
-  border-radius:12px;background:#FFF
-}
-.cm-act:hover{background:#FAF6EE}
-.cm-act .t{font-weight:700;color:var(--om-walnut)}
-.cm-act .s{font-size:13px;color:#7b6a57}
-
-/* ===== Responsive ===== */
-@media (max-width: 1100px){
-  .cm-kpis{grid-template-columns:repeat(2,1fr)}
-}
-@media (max-width: 820px){
-  .cm-main{grid-template-columns:1fr}
-  .cm-a{grid-column:1}
-  .cm-search{width:100%}
-}
+/* ===== Micro ===== */
+.badge-theme{ background: var(--warm-cream); border:1px solid var(--border); color:#6b6b6b; border-radius: 999px; padding:.35rem .7rem }
