@@ -1,8 +1,11 @@
 {
     "java.project.sourcePaths": [
+        "CakeShop/test",
         "CakeShop/src",
         "CakeShop/review",
-        "CakeShop/test"
+        "complete/src/main/java/com/example/servingwebcontent"
     ],
-    "java.project.referencedLibraries": []
+    "java.project.referencedLibraries": [],
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.compile.nullAnalysis.mode": "automatic"
 }
