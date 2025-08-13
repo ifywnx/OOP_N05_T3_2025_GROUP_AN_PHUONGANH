@@ -73,10 +73,10 @@ public class GiaoDich {
 
     @NotNull(message = "Đơn giá không được để trống")
     @DecimalMin(value = "0.0", message = "Đơn giá không được âm")
-    @Column(name = "don_gia", nullable = false, precision = 12, scale = 2)
+    @Column(name = "don_gia", nullable = false)
     private Double donGia;
 
-    @Column(name = "thanh_tien", precision = 15, scale = 2)
+    @Column(name = "thanh_tien")
     private Double thanhTien;
 
     @Enumerated(EnumType.STRING)
@@ -109,11 +109,11 @@ public class GiaoDich {
 
     @DecimalMin(value = "0.0", message = "Phần trăm giảm giá không được âm")
     @DecimalMax(value = "100.0", message = "Phần trăm giảm giá không được quá 100%")
-    @Column(name = "phan_tram_giam_gia", precision = 5, scale = 2)
+    @Column(name = "phan_tram_giam_gia")
     private Double phanTramGiamGia = 0.0;
 
     @DecimalMin(value = "0.0", message = "Số tiền giảm giá không được âm")
-    @Column(name = "so_tien_giam_gia", precision = 12, scale = 2)
+    @Column(name = "so_tien_giam_gia")
     private Double soTienGiamGia = 0.0;
 
     @Enumerated(EnumType.STRING)
@@ -144,14 +144,14 @@ public class GiaoDich {
     }
 
     @DecimalMin(value = "0.0", message = "Tổng tiền không được âm")
-    @Column(name = "tong_tien", precision = 15, scale = 2)
+    @Column(name = "tong_tien")
     private Double tongTien;
 
     @DecimalMin(value = "0.0", message = "Tiền khách đưa không được âm")
-    @Column(name = "tien_khach_dua", precision = 12, scale = 2)
+    @Column(name = "tien_khach_dua")
     private Double tienKhachDua = 0.0;
 
-    @Column(name = "tien_thua", precision = 12, scale = 2)
+    @Column(name = "tien_thua")
     private Double tienThua = 0.0;
 
     @Enumerated(EnumType.STRING)
