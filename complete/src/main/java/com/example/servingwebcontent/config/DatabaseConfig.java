@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @version 1.0.0
  */
 @Configuration
-@EnableJpaRepositories(basePackages = "com.phenikaa.bakery.repository")
+@EnableJpaRepositories(basePackages = "com.example.servingwebcontent.repository")
 @EnableTransactionManagement
 public class DatabaseConfig {
 
