@@ -23,7 +23,7 @@ public class KhachHangController {
     public String listKhachHang(@RequestParam(required = false) String search,
                                @RequestParam(required = false) String type,
                                Model model) {
-        
+
         if (search != null && !search.trim().isEmpty()) {
             model.addAttribute("khachHangs", khachHangService.searchKhachHang(search.trim()));
             model.addAttribute("searchKeyword", search.trim());
@@ -47,7 +47,7 @@ public class KhachHangController {
         model.addAttribute("birthdayCustomers", khachHangService.getCustomersWithBirthdayToday());
         model.addAttribute("totalSpending", khachHangService.getTotalCustomerSpending());
         model.addAttribute("pageTitle", "Quản Lý Khách Hàng");
-        
+
         return "khachhang/list";
     }
 
@@ -64,7 +64,7 @@ public class KhachHangController {
                               BindingResult result,
                               RedirectAttributes redirectAttributes,
                               Model model) {
-        
+
         if (result.hasErrors()) {
             model.addAttribute("genders", KhachHang.GioiTinh.values());
             model.addAttribute("pageTitle", "Thêm Khách Hàng Mới");
@@ -100,7 +100,7 @@ public class KhachHangController {
     @GetMapping("/edit/{id}")
     public String editKhachHangForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<KhachHang> khachHangOpt = khachHangService.getKhachHangById(id);
-        
+
         if (khachHangOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy khách hàng!");
             return "redirect:/khachhang";
@@ -118,7 +118,7 @@ public class KhachHangController {
                                BindingResult result,
                                RedirectAttributes redirectAttributes,
                                Model model) {
-        
+
         if (result.hasErrors()) {
             model.addAttribute("genders", KhachHang.GioiTinh.values());
             model.addAttribute("pageTitle", "Chỉnh Sửa Khách Hàng");
@@ -139,7 +139,7 @@ public class KhachHangController {
     @GetMapping("/view/{id}")
     public String viewKhachHang(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<KhachHang> khachHangOpt = khachHangService.getKhachHangById(id);
-        
+
         if (khachHangOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy khách hàng!");
             return "redirect:/khachhang";
@@ -185,6 +185,7 @@ public class KhachHangController {
     // API endpoints for customer analytics
     @GetMapping("/api/loyalty-stats")
     @ResponseBody
+    @SuppressWarnings("unused") // ẩn cảnh báo các field của anonymous object không được dùng trực tiếp
     public Object getLoyaltyStatistics() {
         return new Object() {
             public final Long vipCount = khachHangService.getVipCustomersCount();

@@ -82,12 +82,12 @@ public class SanPham {
     @NotNull(message = "Giá bán không được để trống")
     @DecimalMin(value = "1000.0", message = "Giá bán phải ít nhất 1,000 VND")
     @DecimalMax(value = "10000000.0", message = "Giá bán không được quá 10,000,000 VND")
-    @Column(name = "gia_ban", nullable = false, precision = 12, scale = 2)
+    @Column(name = "gia_ban", nullable = false)
     private Double giaBan;
 
     @NotNull(message = "Giá vốn không được để trống")
     @DecimalMin(value = "500.0", message = "Giá vốn phải ít nhất 500 VND")
-    @Column(name = "gia_von", nullable = false, precision = 12, scale = 2)
+    @Column(name = "gia_von", nullable = false)
     private Double giaVon;
 
     // =================== INVENTORY MANAGEMENT ===================
@@ -179,71 +179,44 @@ public class SanPham {
 
     // =================== BUSINESS METHODS ===================
     
-    /**
-     * 💰 Tính lợi nhuận trên 1 sản phẩm
-     */
     public Double tinhLoiNhuan() {
         if (giaBan == null || giaVon == null) return 0.0;
         return giaBan - giaVon;
     }
 
-    /**
-     * 📊 Tính tỷ lệ lợi nhuận (%)
-     */
     public Double tinhTyLeLoiNhuan() {
         if (giaVon == null || giaVon == 0) return 0.0;
         return (tinhLoiNhuan() / giaVon) * 100;
     }
 
-    /**
-     * 💎 Tính tổng giá trị tồn kho
-     */
     public Double tinhGiaTriTonKho() {
         if (soLuongTonKho == null || giaVon == null) return 0.0;
         return soLuongTonKho * giaVon;
     }
 
-    /**
-     * 💰 Tính tổng doanh thu từ sản phẩm này
-     */
     public Double tinhTongDoanhThu() {
         if (soLuongDaBan == null || giaBan == null) return 0.0;
         return soLuongDaBan * giaBan;
     }
 
-    /**
-     * 📈 Tính tổng lợi nhuận đã thực hiện
-     */
     public Double tinhTongLoiNhuanThucHien() {
         if (soLuongDaBan == null) return 0.0;
         return soLuongDaBan * tinhLoiNhuan();
     }
 
-    /**
-     * ⚠️ Kiểm tra sản phẩm có sắp hết hàng không
-     */
     public boolean isSapHetHang() {
         return soLuongTonKho != null && soLuongToiThieu != null && 
                soLuongTonKho <= soLuongToiThieu && soLuongTonKho > 0;
     }
 
-    /**
-     * ❌ Kiểm tra sản phẩm có hết hàng không
-     */
     public boolean isHetHang() {
         return soLuongTonKho == null || soLuongTonKho <= 0;
     }
 
-    /**
-     * ⏰ Kiểm tra sản phẩm có hết hạn không
-     */
     public boolean isHetHan() {
         return hanSuDung != null && hanSuDung.isBefore(LocalDate.now());
     }
 
-    /**
-     * 📦 Cập nhật trạng thái tự động dựa trên business rules
-     */
     public void updateTrangThai() {
         if (isHetHan()) {
             this.trangThai = TrangThaiSanPham.HET_HAN;
@@ -256,22 +229,15 @@ public class SanPham {
         }
     }
 
-    /**
-     * 🛒 Xử lý bán hàng (giảm tồn kho, tăng đã bán)
-     */
     public boolean banHang(Integer soLuong) {
         if (soLuong == null || soLuong <= 0) return false;
         if (isHetHang() || soLuongTonKho < soLuong) return false;
-        
         this.soLuongTonKho -= soLuong;
         this.soLuongDaBan += soLuong;
         updateTrangThai();
         return true;
     }
 
-    /**
-     * 📦 Nhập hàng (tăng tồn kho)
-     */
     public void nhapHang(Integer soLuong) {
         if (soLuong != null && soLuong > 0) {
             this.soLuongTonKho += soLuong;
@@ -279,49 +245,32 @@ public class SanPham {
         }
     }
 
-    /**
-     * 🎨 Lấy hình ảnh theo mã sản phẩm với Custom URLs
-     */
     public String getImageUrl() {
-        // Custom image mapping cho từng sản phẩm cụ thể
         Map<String, String> customImages = new HashMap<>();
-        
-        // Bánh Kem
         customImages.put("BK001", "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop");
         customImages.put("BK002", "https://images.unsplash.com/photo-1586040140378-b1f84ca17d24?w=400&h=300&fit=crop");
         customImages.put("BK003", "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop");
         customImages.put("BK004", "https://images.unsplash.com/photo-1567958147117-4d93e0eca942?w=400&h=300&fit=crop");
         customImages.put("BK005", "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&h=300&fit=crop");
         customImages.put("BK006", "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400&h=300&fit=crop");
-        
-        // Bánh Ngọt
         customImages.put("BN001", "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=400&h=300&fit=crop");
         customImages.put("BN002", "https://images.unsplash.com/photo-1569864358642-9d1684040f43?w=400&h=300&fit=crop");
         customImages.put("BN003", "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&h=300&fit=crop");
         customImages.put("BN004", "https://images.unsplash.com/photo-1550617931-e17a7b70daa2?w=400&h=300&fit=crop");
         customImages.put("BN005", "https://images.unsplash.com/photo-1519869325930-281384150729?w=400&h=300&fit=crop");
-        
-        // Bánh Mì
         customImages.put("BM001", "https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=400&h=300&fit=crop");
         customImages.put("BM002", "https://images.unsplash.com/photo-1545462461-4d1ef874a5e1?w=400&h=300&fit=crop");
         customImages.put("BM003", "https://images.unsplash.com/photo-1553909489-cd47e0ef937f?w=400&h=300&fit=crop");
         customImages.put("BM004", "https://images.unsplash.com/photo-1508736793122-f516e3ba5569?w=400&h=300&fit=crop");
-        
-        // Đồ Uống
         customImages.put("DU001", "https://images.unsplash.com/photo-1545665277-5937750b5a96?w=400&h=300&fit=crop");
         customImages.put("DU002", "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&h=300&fit=crop");
         customImages.put("DU003", "https://images.unsplash.com/photo-1517701550927-30cf4ba1f938?w=400&h=300&fit=crop");
-        
-        // Bánh Quy
         customImages.put("BQ001", "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&h=300&fit=crop");
         customImages.put("BQ002", "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&h=300&fit=crop");
-        
-        // Trả về custom image nếu có, nếu không thì dùng default theo category
+
         if (maSanPham != null && customImages.containsKey(maSanPham)) {
             return customImages.get(maSanPham);
         }
-        
-        // Fallback to category-based images
         return switch (danhMuc) {
             case BANH_KEM -> "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop";
             case BANH_MI -> "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=400&h=300&fit=crop";
@@ -399,8 +348,6 @@ public class SanPham {
     public List<GiaoDich> getGiaoDichList() { return giaoDichList; }
     public void setGiaoDichList(List<GiaoDich> giaoDichList) { this.giaoDichList = giaoDichList; }
 
-    // =================== EQUALS & HASHCODE ===================
-    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -414,17 +361,12 @@ public class SanPham {
         return Objects.hash(maSanPham);
     }
 
-    // =================== TO STRING ===================
-    
     @Override
     public String toString() {
         return String.format("SanPham{id=%d, ma='%s', ten='%s', danhMuc=%s, gia=%.0f, tonKho=%d, trangThai=%s}", 
                            id, maSanPham, tenSanPham, danhMuc, giaBan, soLuongTonKho, trangThai);
     }
 
-    /**
-     * 📊 Lấy thông tin tóm tắt cho dashboard
-     */
     public String getSummary() {
         return String.format("%s %s - %,.0f₫ (Còn: %d)", 
                            danhMuc.getIcon(), tenSanPham, giaBan, soLuongTonKho);

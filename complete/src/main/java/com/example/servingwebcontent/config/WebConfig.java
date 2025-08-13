@@ -2,6 +2,7 @@
 package com.example.servingwebcontent.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull; // thêm
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -11,14 +12,14 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
+    public void addViewControllers(@NonNull ViewControllerRegistry registry) {
         // Default redirect to dashboard
         registry.addViewController("/").setViewName("redirect:/dashboard");
         registry.addViewController("/index").setViewName("redirect:/dashboard");
     }
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         // Static resources
         registry.addResourceHandler("/css/**")
                 .addResourceLocations("classpath:/static/css/");
@@ -29,7 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
         // Allow CORS for development
         registry.addMapping("/api/**")
                 .allowedOrigins("http://localhost:3000", "http://localhost:8080")

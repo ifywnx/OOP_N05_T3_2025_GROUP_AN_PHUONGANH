@@ -153,7 +153,7 @@ public class KhachHang {
     private Integer diemTichLuy = 0;
 
     @DecimalMin(value = "0.0", message = "Tổng chi tiêu không được âm")
-    @Column(name = "tong_chi_tieu", precision = 15, scale = 2)
+    @Column(name = "tong_chi_tieu")
     private Double tongChiTieu = 0.0;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -165,7 +165,7 @@ public class KhachHang {
     private Integer soLanMuaHang = 0;
 
     @DecimalMin(value = "0.0", message = "Giá trị đơn hàng trung bình không được âm")
-    @Column(name = "gia_tri_don_hang_tb", precision = 12, scale = 2)
+    @Column(name = "gia_tri_don_hang_tb")
     private Double giaTriDonHangTrungBinh = 0.0;
 
     // =================== PREFERENCES & BEHAVIOR ===================
@@ -248,9 +248,6 @@ public class KhachHang {
 
     // =================== BUSINESS METHODS ===================
     
-    /**
-     * 🎯 Cập nhật loại khách hàng dựa trên tổng chi tiêu
-     */
     public void capNhatLoaiKhachHang() {
         LoaiKhachHang loaiMoi = LoaiKhachHang.xacDinhLoaiKhachHang(this.tongChiTieu);
         if (this.loaiKhachHang != loaiMoi) {
@@ -258,52 +255,27 @@ public class KhachHang {
         }
     }
 
-    /**
-     * 💰 Xử lý mua hàng - cập nhật điểm, chi tiêu, statistics
-     */
     public void capNhatThongTinMuaHang(Double giaTriDonHang, Integer soLuong) {
         if (giaTriDonHang == null || giaTriDonHang <= 0) return;
-        
-        // Cập nhật tổng chi tiêu
         this.tongChiTieu += giaTriDonHang;
-        
-        // Cập nhật số lần mua hàng
         this.soLanMuaHang++;
-        
-        // Cập nhật giá trị đơn hàng trung bình
         this.giaTriDonHangTrungBinh = this.tongChiTieu / this.soLanMuaHang;
-        
-        // Cập nhật điểm tích lũy (1 điểm = 10,000 VND)
         int diemMoi = (int) (giaTriDonHang / 10000);
         this.diemTichLuy += diemMoi;
-        
-        // Cập nhật lần mua cuối
         this.lanMuaCuoi = LocalDate.now();
-        
-        // Cập nhật loại khách hàng
         capNhatLoaiKhachHang();
     }
 
-    /**
-     * 🎁 Sử dụng điểm tích lũy (1 điểm = 1,000 VND)
-     */
     public boolean suDungDiemTichLuy(int diemSuDung) {
         if (diemSuDung <= 0 || diemSuDung > this.diemTichLuy) return false;
-        
         this.diemTichLuy -= diemSuDung;
         return true;
     }
 
-    /**
-     * 💎 Tính giá trị điểm tích lũy (VND)
-     */
     public Double tinhGiaTriDiemTichLuy() {
         return this.diemTichLuy * 1000.0;
     }
 
-    /**
-     * 🎂 Kiểm tra có phải sinh nhật hôm nay không
-     */
     public boolean isSinhNhatHomNay() {
         if (ngaySinh == null) return false;
         LocalDate today = LocalDate.now();
@@ -311,57 +283,37 @@ public class KhachHang {
                ngaySinh.getDayOfMonth() == today.getDayOfMonth();
     }
 
-    /**
-     * 📊 Tính % tiến độ lên hạng tiếp theo
-     */
     public double tinhTienDoLenHang() {
         LoaiKhachHang hangTiepTheo = null;
-        
         switch (this.loaiKhachHang) {
             case THUONG -> hangTiepTheo = LoaiKhachHang.PREMIUM;
             case PREMIUM -> hangTiepTheo = LoaiKhachHang.VIP;
-            case VIP -> { return 100.0; } // Đã VIP rồi
+            case VIP -> { return 100.0; }
         }
-        
         if (hangTiepTheo == null) return 100.0;
-        
         double chiTieuCanThiet = hangTiepTheo.getChiTieuToiThieu();
         double tieuDeCanThiet = chiTieuCanThiet - this.tongChiTieu;
-        
         if (tieuDeCanThiet <= 0) return 100.0;
-        
         return Math.min(100.0, (this.tongChiTieu / chiTieuCanThiet) * 100);
     }
 
-    /**
-     * 💰 Tính số tiền cần chi thêm để lên hạng
-     */
     public Double tinhSoTienCanChiThemDeLenHang() {
         LoaiKhachHang hangTiepTheo = null;
-        
         switch (this.loaiKhachHang) {
             case THUONG -> hangTiepTheo = LoaiKhachHang.PREMIUM;
             case PREMIUM -> hangTiepTheo = LoaiKhachHang.VIP;
             case VIP -> { return 0.0; }
         }
-        
         if (hangTiepTheo == null) return 0.0;
-        
         double soTienCanThem = hangTiepTheo.getChiTieuToiThieu() - this.tongChiTieu;
         return Math.max(0.0, soTienCanThem);
     }
 
-    /**
-     * 📈 Kiểm tra khách hàng có loyal không (mua trong 3 tháng gần đây)
-     */
     public boolean isKhachHangLoyal() {
         if (lanMuaCuoi == null) return false;
         return lanMuaCuoi.isAfter(LocalDate.now().minusMonths(3));
     }
 
-    /**
-     * 🎨 Lấy avatar mặc định theo giới tính
-     */
     public String getAvatarUrl() {
         return switch (gioiTinh != null ? gioiTinh : GioiTinh.KHAC) {
             case NAM -> "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face";
@@ -370,9 +322,6 @@ public class KhachHang {
         };
     }
 
-    /**
-     * 🏆 Lấy badge hiển thị cho customer tier
-     */
     public String getTierBadge() {
         return String.format("<span class='badge' style='background-color: %s'>%s %s</span>", 
                            loaiKhachHang.getColor(), loaiKhachHang.getIcon(), loaiKhachHang.getTen());
@@ -477,9 +426,6 @@ public class KhachHang {
                            id, maKhachHang, hoTen, loaiKhachHang, tongChiTieu, trangThai);
     }
 
-    /**
-     * 📊 Lấy thông tin tóm tắt cho dashboard
-     */
     public String getSummary() {
         return String.format("%s %s (%s) - %,.0f₫", 
                            loaiKhachHang.getIcon(), hoTen, loaiKhachHang.getTen(), tongChiTieu);

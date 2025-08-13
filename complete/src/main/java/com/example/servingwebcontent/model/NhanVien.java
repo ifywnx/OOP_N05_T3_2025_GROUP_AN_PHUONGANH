@@ -179,23 +179,23 @@ public class NhanVien {
     @NotNull(message = "Lương cơ bản không được để trống")
     @DecimalMin(value = "1000000.0", message = "Lương cơ bản phải ít nhất 1,000,000 VND")
     @DecimalMax(value = "100000000.0", message = "Lương cơ bản không được quá 100,000,000 VND")
-    @Column(name = "luong_co_ban", nullable = false, precision = 12, scale = 2)
+    @Column(name = "luong_co_ban", nullable = false)
     private Double luongCoBan;
 
     @DecimalMin(value = "0.0", message = "Hoa hồng không được âm")
-    @Column(name = "hoa_hong", precision = 10, scale = 2)
+    @Column(name = "hoa_hong")
     private Double hoaHong = 0.0;
 
     @DecimalMin(value = "0.0", message = "Thưởng không được âm")
-    @Column(name = "thuong", precision = 10, scale = 2)
+    @Column(name = "thuong")
     private Double thuong = 0.0;
 
     @DecimalMin(value = "0.0", message = "Phụ cấp không được âm")
-    @Column(name = "phu_cap", precision = 10, scale = 2)
+    @Column(name = "phu_cap")
     private Double phuCap = 0.0;
 
     @DecimalMin(value = "0.0", message = "Doanh số tháng không được âm")
-    @Column(name = "doanh_so_thang", precision = 15, scale = 2)
+    @Column(name = "doanh_so_thang")
     private Double doanhSoThang = 0.0;
 
     @Min(value = 0, message = "Số đơn hàng không được âm")
@@ -204,7 +204,7 @@ public class NhanVien {
 
     @DecimalMin(value = "0.0", message = "Hiệu suất không được âm")
     @DecimalMax(value = "200.0", message = "Hiệu suất không được quá 200%")
-    @Column(name = "hieu_suat_phan_tram", precision = 5, scale = 2)
+    @Column(name = "hieu_suat_phan_tram")
     private Double hieuSuatPhanTram = 100.0;
 
     @Min(value = 0, message = "Số ngày làm việc không được âm")
@@ -322,9 +322,6 @@ public class NhanVien {
 
     // =================== BUSINESS METHODS ===================
     
-    /**
-     * 💰 Tính tổng lương tháng
-     */
     public Double tinhTongLuongThang() {
         double tongLuong = luongCoBan != null ? luongCoBan : 0.0;
         tongLuong += hoaHong != null ? hoaHong : 0.0;
@@ -333,64 +330,44 @@ public class NhanVien {
         return tongLuong;
     }
 
-    /**
-     * 📊 Tính hoa hồng dựa trên doanh số
-     */
     public Double tinhHoaHongTheoDoanhSo() {
         if (doanhSoThang == null || doanhSoThang <= 0) return 0.0;
-        
         double tyLeHoaHong = switch (chucVu) {
-            case GIAM_DOC -> 0.05; // 5%
-            case TRUONG_PHONG -> 0.04; // 4%
-            case PHO_PHONG -> 0.03; // 3%
-            case NHAN_VIEN_CHINH -> 0.02; // 2%
-            case NHAN_VIEN -> 0.015; // 1.5%
-            case THUC_TAP_SINH -> 0.01; // 1%
+            case GIAM_DOC -> 0.05;
+            case TRUONG_PHONG -> 0.04;
+            case PHO_PHONG -> 0.03;
+            case NHAN_VIEN_CHINH -> 0.02;
+            case NHAN_VIEN -> 0.015;
+            case THUC_TAP_SINH -> 0.01;
         };
-        
         return doanhSoThang * tyLeHoaHong;
     }
 
-    /**
-     * 🎯 Cập nhật hiệu suất và đánh giá tự động
-     */
     public void capNhatHieuSuat() {
         if (soNgayLamViecThang != null && soNgayLamViecThang > 0) {
             double hieuSuatChamCong = (soNgayLamViecThang / 22.0) * 100;
-            
             double hieuSuatDoanhSo = 100.0;
             if (phongBan == PhongBan.BAN_HANG && doanhSoThang != null) {
-                double doanhSoMucTieu = 50000000.0; // 50M VND mục tiêu
+                double doanhSoMucTieu = 50000000.0;
                 hieuSuatDoanhSo = Math.min(150.0, (doanhSoThang / doanhSoMucTieu) * 100);
             }
-            
             this.hieuSuatPhanTram = (hieuSuatChamCong * 0.7) + (hieuSuatDoanhSo * 0.3);
         }
-        
         this.danhGiaHieuSuat = DanhGiaHieuSuat.xacDinhDanhGia(this.hieuSuatPhanTram);
         this.hoaHong = tinhHoaHongTheoDoanhSo();
     }
 
-    /**
-     * 📅 Tính số năm kinh nghiệm
-     */
     public int tinhSoNamKinhNghiem() {
         if (ngayVaoLam == null) return 0;
         LocalDate ngayKetThuc = ngayNghiViec != null ? ngayNghiViec : LocalDate.now();
         return Period.between(ngayVaoLam, ngayKetThuc).getYears();
     }
 
-    /**
-     * 🎂 Tính tuổi
-     */
     public int tinhTuoi() {
         if (ngaySinh == null) return 0;
         return Period.between(ngaySinh, LocalDate.now()).getYears();
     }
 
-    /**
-     * ⚡ Kiểm tra có đủ điều kiện thăng chức không
-     */
     public boolean coDieuKienThangChuc() {
         if (tinhSoNamKinhNghiem() < 2) return false;
         if (hieuSuatPhanTram == null || hieuSuatPhanTram < 85.0) return false;
@@ -398,20 +375,13 @@ public class NhanVien {
         return true;
     }
 
-    /**
-     * 📈 Xử lý bán hàng
-     */
     public void xuLyBanHang(Double giaTriDonHang) {
         if (giaTriDonHang == null || giaTriDonHang <= 0) return;
-        
         this.doanhSoThang += giaTriDonHang;
         this.soDonHangThang++;
         capNhatHieuSuat();
     }
 
-    /**
-     * 🎨 Lấy avatar mặc định theo giới tính
-     */
     public String getAvatarUrl() {
         return switch (gioiTinh != null ? gioiTinh : GioiTinh.KHAC) {
             case NAM -> "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face";
@@ -515,8 +485,6 @@ public class NhanVien {
     public List<GiaoDich> getGiaoDichList() { return giaoDichList; }
     public void setGiaoDichList(List<GiaoDich> giaoDichList) { this.giaoDichList = giaoDichList; }
 
-    // =================== EQUALS & HASHCODE ===================
-    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

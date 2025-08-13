@@ -24,7 +24,7 @@ public class NhanVienController {
                               @RequestParam(required = false) String department,
                               @RequestParam(required = false) String position,
                               Model model) {
-        
+
         if (search != null && !search.trim().isEmpty()) {
             model.addAttribute("nhanViens", nhanVienService.searchNhanVien(search.trim()));
             model.addAttribute("searchKeyword", search.trim());
@@ -48,7 +48,7 @@ public class NhanVienController {
         model.addAttribute("topPerformers", nhanVienService.getTopPerformers());
         model.addAttribute("totalSalesRevenue", nhanVienService.getTotalSalesRevenue());
         model.addAttribute("pageTitle", "Quản Lý Nhân Viên");
-        
+
         return "nhanvien/list";
     }
 
@@ -68,7 +68,7 @@ public class NhanVienController {
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
                              Model model) {
-        
+
         if (result.hasErrors()) {
             model.addAttribute("departments", NhanVien.PhongBan.values());
             model.addAttribute("positions", NhanVien.ChucVu.values());
@@ -102,7 +102,7 @@ public class NhanVienController {
     @GetMapping("/view/{id}")
     public String viewNhanVien(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<NhanVien> nhanVienOpt = nhanVienService.getNhanVienById(id);
-        
+
         if (nhanVienOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy nhân viên!");
             return "redirect:/nhanvien";
@@ -116,7 +116,7 @@ public class NhanVienController {
     @GetMapping("/edit/{id}")
     public String editNhanVienForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<NhanVien> nhanVienOpt = nhanVienService.getNhanVienById(id);
-        
+
         if (nhanVienOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy nhân viên!");
             return "redirect:/nhanvien";
@@ -137,7 +137,7 @@ public class NhanVienController {
                               BindingResult result,
                               RedirectAttributes redirectAttributes,
                               Model model) {
-        
+
         if (result.hasErrors()) {
             model.addAttribute("departments", NhanVien.PhongBan.values());
             model.addAttribute("positions", NhanVien.ChucVu.values());
@@ -201,7 +201,7 @@ public class NhanVienController {
             Optional<NhanVien> nhanVienOpt = nhanVienService.getNhanVienById(id);
             if (nhanVienOpt.isPresent()) {
                 NhanVien nhanVien = nhanVienOpt.get();
-                
+
                 if (nhanVien.coDieuKienThangChuc()) {
                     nhanVien.setChucVu(newPosition);
                     nhanVien.setLuongCoBan(newSalary);
@@ -222,6 +222,7 @@ public class NhanVienController {
     // API endpoints for HR analytics
     @GetMapping("/api/department-stats")
     @ResponseBody
+    @SuppressWarnings("unused") // ẩn cảnh báo các field của anonymous object không được dùng trực tiếp
     public Object getDepartmentStatistics() {
         return new Object() {
             public final Long activeEmployees = nhanVienService.getActiveEmployeeCount();
