@@ -1,38 +1,54 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <!-- Phần head giống với nhân viên -->
-    <title>Quản Lý Giao Dịch</title>
-    <style>
-        .transaction-card {
-            border-left: 4px solid var(--bakery-pink);
-            transition: all 0.3s;
-        }
-        .transaction-card:hover {
-            transform: translateX(5px);
-        }
-        .badge-payment {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-        }
-        .badge-cancel {
-            background: linear-gradient(135deg, #F44336, #C62828);
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Giao Dịch - Tiệm Bánh Phenikaa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <!-- Navigation Bar (giống module Nhân viên) -->
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-birthday-cake me-2"></i>Tiệm Bánh Phenikaa
+            </a>
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
+                <a class="nav-link" href="/sanpham">
+                    <i class="fas fa-birthday-cake me-1"></i> Sản Phẩm
+                </a>
+                <a class="nav-link" href="/khachhang">
+                    <i class="fas fa-users me-1"></i> Khách Hàng
+                </a>
+                <a class="nav-link" href="/nhanvien">
+                    <i class="fas fa-user-tie me-1"></i> Nhân Viên
+                </a>
+                <a class="nav-link active" href="/giaodich">
+                    <i class="fas fa-receipt me-1"></i> Giao Dịch
+                </a>
+            </div>
+        </div>
+    </nav>
 
+    <!-- Main Content -->
     <div class="container-fluid mt-4">
         <!-- Page Header -->
-        <div class="page-header mb-4">
+        <div class="card mb-4 p-4">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1><i class="fas fa-receipt me-3"></i>Quản Lý Giao Dịch</h1>
-                    <p class="mb-0">Lịch sử mua hàng và thanh toán</p>
+                    <h1 class="mb-2">
+                        <i class="fas fa-receipt text-primary me-3"></i>Quản Lý Giao Dịch
+                    </h1>
+                    <p class="text-muted mb-0">Lịch sử mua hàng, thanh toán và báo cáo doanh thu</p>
                 </div>
                 <div class="col-md-4 text-end">
-                    <a href="/giaodich/new" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Tạo Giao Dịch Mới
+                    <a href="/giaodich/add" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Tạo Giao Dịch
                     </a>
                 </div>
             </div>
@@ -41,106 +57,161 @@
         <!-- Stats Cards -->
         <div class="row mb-4">
             <div class="col-md-3">
-                <div class="stats-card">
-                    <i class="fas fa-receipt stat-icon total"></i>
-                    <h3 th:text="${totalTransactions}">250</h3>
-                    <p>Tổng Giao Dịch</p>
+                <div class="kpi card text-center p-3">
+                    <i class="fas fa-receipt fa-2x mb-3"></i>
+                    <h3 th:text="${#lists.size(giaoDichs)}">0</h3>
+                    <p class="mb-0">Tổng Giao Dịch</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stats-card">
-                    <i class="fas fa-coins stat-icon revenue"></i>
-                    <h3 th:text="${totalRevenue} + '₫'">50,000,000₫</h3>
-                    <p>Doanh Thu</p>
+                <div class="kpi card text-center p-3">
+                    <i class="fas fa-coins fa-2x mb-3 text-success"></i>
+                    <h3 th:text="${#numbers.formatDecimal(totalRevenue ?: 0, 0, 'COMMA', 0, 'POINT')}">0</h3>
+                    <p class="mb-0">Doanh Thu (₫)</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stats-card">
-                    <i class="fas fa-check-circle stat-icon success"></i>
-                    <h3 th:text="${successTransactions}">230</h3>
-                    <p>Thành Công</p>
+                <div class="kpi card text-center p-3">
+                    <i class="fas fa-calendar-day fa-2x mb-3 text-info"></i>
+                    <h3 th:text="${#numbers.formatDecimal(dailyRevenue ?: 0, 0, 'COMMA', 0, 'POINT')}">0</h3>
+                    <p class="mb-0">Hôm Nay (₫)</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stats-card">
-                    <i class="fas fa-times-circle stat-icon cancel"></i>
-                    <h3 th:text="${cancelledTransactions}">20</h3>
-                    <p>Đã Hủy</p>
+                <div class="kpi card text-center p-3">
+                    <i class="fas fa-chart-bar fa-2x mb-3 text-warning"></i>
+                    <h3 th:text="${#numbers.formatDecimal(averageTransactionValue ?: 0, 0, 'COMMA', 0, 'POINT')}">0</h3>
+                    <p class="mb-0">Đơn TB (₫)</p>
                 </div>
             </div>
         </div>
 
-        <!-- Filter -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <form th:action="@{/giaodich}" method="get">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="date" name="fromDate" class="form-control" th:value="${fromDate}">
-                        </div>
-                        <div class="col-md-3">
-                            <input type="date" name="toDate" class="form-control" th:value="${toDate}">
-                        </div>
-                        <div class="col-md-3">
-                            <select name="status" class="form-select">
-                                <option value="">Tất cả trạng thái</option>
-                                <option value="HOAN_TAT" th:selected="${status == 'HOAN_TAT'}">Hoàn tất</option>
-                                <option value="DA_HUY" th:selected="${status == 'DA_HUY'}">Đã hủy</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-filter me-2"></i>Lọc
-                            </button>
-                        </div>
+        <!-- Search & Filter -->
+        <div class="card mb-4 p-3">
+            <form th:action="@{/giaodich}" method="get">
+                <div class="row align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Từ Ngày</label>
+                        <input type="date" name="date" class="form-control" th:value="${selectedDate}">
                     </div>
-                </form>
-            </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Trạng Thái</label>
+                        <select name="status" class="form-select">
+                            <option value="">Tất cả trạng thái</option>
+                            <option th:each="status : ${statuses}" 
+                                    th:value="${status}" 
+                                    th:text="${status.icon + ' ' + status.ten}"
+                                    th:selected="${selectedStatus == status.name()}">
+                                ✅ Hoàn thành
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Lọc
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="/giaodich" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-times me-2"></i>Xóa Lọc
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-outline-success w-100" onclick="exportData()">
+                            <i class="fas fa-download me-2"></i>Xuất Excel
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
 
-        <!-- Transaction List -->
-        <div class="row">
+        <!-- Alerts -->
+        <div th:if="${success}" class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i><span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-2"></i><span th:text="${error}"></span>
+        </div>
+
+        <!-- Transaction Cards -->
+        <div class="row" th:if="${giaoDichs != null and not #lists.isEmpty(giaoDichs)}">
             <div class="col-12">
-                <div class="card transaction-card mb-3" 
-                     th:each="gd : ${giaoDichs}" 
-                     th:classappend="${gd.trangThai == 'DA_HUY'} ? 'bg-light'">
+                <div class="card mb-3 transaction-card" th:each="gd : ${giaoDichs}">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h5 class="mb-1">
-                                    <span th:text="${gd.maGiaoDich}">HD001</span>
-                                    <span class="badge ms-2" 
-                                          th:classappend="${gd.trangThai == 'HOAN_TAT'} ? 'badge-payment' : 'badge-cancel'"
-                                          th:text="${gd.trangThai == 'HOAN_TAT'} ? 'Hoàn tất' : 'Đã hủy'">
-                                        Hoàn tất
-                                    </span>
-                                </h5>
-                                <p class="text-muted mb-1">
-                                    <i class="fas fa-calendar-alt me-1"></i>
-                                    <span th:text="${#dates.format(gd.ngayTao, 'dd/MM/yyyy HH:mm')}">01/01/2023</span>
-                                </p>
-                                <p class="mb-1">
-                                    <i class="fas fa-user me-1"></i>
-                                    <span th:text="${gd.khachHang.hoTen}">Nguyễn Văn A</span>
-                                    <span class="text-muted ms-2" th:text="${gd.khachHang.soDienThoai}">0987654321</span>
-                                </p>
-                                <p class="mb-0">
-                                    <i class="fas fa-user-tie me-1"></i>
-                                    <span th:text="${gd.nhanVien.hoTen}">Trần Thị B</span>
-                                    <span class="text-muted ms-2" th:text="${gd.nhanVien.maNhanVien}">NV001</span>
-                                </p>
+                        <div class="row align-items-center">
+                            <!-- Left: Transaction Info -->
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="transaction-icon me-3">
+                                        <i class="fas fa-receipt"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-1" th:text="${gd.maGiaoDich}">GD001</h5>
+                                        <span class="badge" 
+                                              th:classappend="'bg-' + ${gd.trangThai.bootstrapClass}"
+                                              th:text="${gd.trangThai.icon + ' ' + gd.trangThai.ten}">
+                                            ✅ Hoàn thành
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <i class="fas fa-user text-muted me-2"></i>
+                                    <span th:text="${gd.khachHang?.hoTen ?: 'Khách lẻ'}">Khách hàng</span>
+                                    <span class="text-muted ms-2" th:if="${gd.khachHang}" th:text="'(' + ${gd.khachHang.soDienThoai} + ')'"></span>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <i class="fas fa-user-tie text-muted me-2"></i>
+                                    <span th:text="${gd.nhanVien.hoTen}">Nhân viên</span>
+                                </div>
+                                
+                                <div>
+                                    <i class="fas fa-clock text-muted me-2"></i>
+                                    <small th:text="${#temporals.format(gd.createdAt, 'dd/MM/yyyy HH:mm')}">25/12/2024 10:30</small>
+                                </div>
                             </div>
-                            <div class="text-end">
-                                <h4 class="text-primary" th:text="${#numbers.formatDecimal(gd.tongTien, 0, 'COMMA', 0, 'POINT')} + '₫'">500,000₫</h4>
-                                <div class="mt-2">
-                                    <a th:href="@{/giaodich/{id}(id=${gd.id})}" 
-                                       class="btn btn-sm btn-primary me-1">
-                                        <i class="fas fa-eye"></i> Chi tiết
+
+                            <!-- Middle: Product Info -->
+                            <div class="col-md-3">
+                                <div class="product-info">
+                                    <h6 class="mb-1" th:text="${gd.sanPham.tenSanPham}">Sản phẩm</h6>
+                                    <p class="text-muted small mb-1">
+                                        SL: <span th:text="${gd.soLuong}">1</span> x 
+                                        <span th:text="${#numbers.formatDecimal(gd.donGia, 0, 'COMMA', 0, 'POINT')} + '₫'">100,000₫</span>
+                                    </p>
+                                    <span class="badge bg-light text-dark" th:text="${gd.phuongThucThanhToan.icon + ' ' + gd.phuongThucThanhToan.ten}">
+                                        💵 Tiền mặt
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Right: Amount & Actions -->
+                            <div class="col-md-3 text-end">
+                                <h4 class="mb-2 text-primary" th:text="${#numbers.formatDecimal(gd.tongTien, 0, 'COMMA', 0, 'POINT')} + '₫'">150,000₫</h4>
+                                
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a th:href="@{/giaodich/view/{id}(id=${gd.id})}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
                                     </a>
-                                    <button th:if="${gd.trangThai == 'HOAN_TAT'}" 
-                                            class="btn btn-sm btn-danger"
-                                            th:onclick="'confirmCancel(\'' + ${gd.id} + '\')'">
-                                        <i class="fas fa-times"></i> Hủy
+                                    
+                                    <a th:href="@{/giaodich/receipt/{id}(id=${gd.id})}" 
+                                       class="btn btn-sm btn-success"
+                                       th:if="${gd.trangThai.name() == 'HOAN_THANH'}">
+                                        <i class="fas fa-print"></i>
+                                    </a>
+                                    
+                                    <button class="btn btn-sm btn-warning" 
+                                            th:if="${gd.trangThai.name() == 'DANG_XU_LY'}"
+                                            th:onclick="'completeTransaction(' + ${gd.id} + ')'">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    
+                                    <button class="btn btn-sm btn-danger" 
+                                            th:if="${gd.trangThai.name() != 'HUY_BO'}"
+                                            th:onclick="'confirmCancel(' + ${gd.id} + ', \'' + ${gd.maGiaoDich} + '\')'">
+                                        <i class="fas fa-times"></i>
                                     </button>
                                 </div>
                             </div>
@@ -151,25 +222,61 @@
         </div>
 
         <!-- Empty State -->
-        <div th:if="${giaoDichs.empty}" class="text-center py-5">
-            <i class="fas fa-receipt fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Không có giao dịch nào</h4>
-            <a href="/giaodich/new" class="btn btn-primary mt-3">
+        <div th:if="${giaoDichs == null or #lists.isEmpty(giaoDichs)}" class="text-center py-5">
+            <i class="fas fa-receipt fa-5x text-muted mb-3"></i>
+            <h4 class="text-muted">Không tìm thấy giao dịch nào</h4>
+            <p class="text-muted">Thử thay đổi bộ lọc hoặc tạo giao dịch mới.</p>
+            <a href="/giaodich/add" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Tạo Giao Dịch Đầu Tiên
             </a>
         </div>
     </div>
 
-    <!-- Cancel Confirmation Modal -->
-    <div class="modal fade" id="cancelModal" tabindex="-1" aria-hidden="true">
+    <!-- Complete Transaction Modal -->
+    <div class="modal fade" id="completeModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Xác nhận hủy giao dịch</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Hoàn thành giao dịch</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    Bạn chắc chắn muốn hủy giao dịch này? Thao tác không thể hoàn tác!
+                    <div class="mb-3">
+                        <label class="form-label">Tổng tiền:</label>
+                        <h4 class="text-primary" id="totalAmount">0₫</h4>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tiền khách đưa:</label>
+                        <input type="number" class="form-control" id="customerPaid" placeholder="Nhập số tiền">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tiền thừa:</label>
+                        <h5 class="text-success" id="changeAmount">0₫</h5>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="confirmCompleteBtn">Hoàn thành</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div class="modal fade" id="cancelModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Hủy giao dịch</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn hủy giao dịch <strong id="transactionCode"></strong>?</p>
+                    <div class="mb-3">
+                        <label class="form-label">Lý do hủy:</label>
+                        <textarea class="form-control" id="cancelReason" rows="3" placeholder="Nhập lý do hủy giao dịch..."></textarea>
+                    </div>
+                    <p class="text-danger small">⚠️ Thao tác này không thể hoàn tác!</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -179,30 +286,108 @@
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
+        let transactionIdToComplete = null;
         let transactionIdToCancel = null;
-        const cancelModal = new bootstrap.Modal('#cancelModal');
+        let transactionTotal = 0;
         
-        function confirmCancel(id) {
+        const completeModal = new bootstrap.Modal('#completeModal');
+        const cancelModal = new bootstrap.Modal('#cancelModal');
+
+        function completeTransaction(id) {
+            transactionIdToComplete = id;
+            // Get transaction total from the card
+            const card = event.target.closest('.transaction-card');
+            const totalText = card.querySelector('.text-primary').textContent;
+            transactionTotal = parseInt(totalText.replace(/[₫,]/g, ''));
+            
+            document.getElementById('totalAmount').textContent = totalText;
+            document.getElementById('customerPaid').value = '';
+            document.getElementById('changeAmount').textContent = '0₫';
+            
+            completeModal.show();
+        }
+
+        function confirmCancel(id, code) {
             transactionIdToCancel = id;
+            document.getElementById('transactionCode').textContent = code;
+            document.getElementById('cancelReason').value = '';
             cancelModal.show();
         }
-        
+
+        // Calculate change when customer paid amount changes
+        document.getElementById('customerPaid').addEventListener('input', function() {
+            const paid = parseInt(this.value) || 0;
+            const change = Math.max(0, paid - transactionTotal);
+            document.getElementById('changeAmount').textContent = change.toLocaleString() + '₫';
+            
+            document.getElementById('confirmCompleteBtn').disabled = paid < transactionTotal;
+        });
+
+        document.getElementById('confirmCompleteBtn').addEventListener('click', function() {
+            if (transactionIdToComplete) {
+                const paid = parseInt(document.getElementById('customerPaid').value);
+                if (paid >= transactionTotal) {
+                    window.location.href = `/giaodich/complete/${transactionIdToComplete}?tienKhachDua=${paid}`;
+                }
+            }
+        });
+
         document.getElementById('confirmCancelBtn').addEventListener('click', function() {
             if (transactionIdToCancel) {
-                fetch(`/giaodich/${transactionIdToCancel}/cancel`, {
-                    method: 'PUT',
-                })
-                .then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        alert('Hủy giao dịch thất bại!');
-                    }
-                });
+                const reason = document.getElementById('cancelReason').value;
+                window.location.href = `/giaodich/cancel/${transactionIdToCancel}?reason=${encodeURIComponent(reason)}`;
             }
-            cancelModal.hide();
+        });
+
+        function exportData() {
+            window.open('/giaodich/export', '_blank');
+        }
+
+        // Animation for cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.transaction-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.3s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
         });
     </script>
+
+    <style>
+        .transaction-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .transaction-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .transaction-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--light-pink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        
+        .product-info h6 {
+            color: var(--text);
+            font-weight: 600;
+        }
+    </style>
 </body>
 </html>

@@ -46,15 +46,27 @@ public class GiaoDichController {
             model.addAttribute("giaoDichs", giaoDichService.getAllGiaoDich());
         }
 
-        // Analytics data - HOÀN THÀNH
+        // Analytics data với null safety
         model.addAttribute("statuses", GiaoDich.TrangThaiGiaoDich.values());
         model.addAttribute("paymentMethods", GiaoDich.PhuongThucThanhToan.values());
-        model.addAttribute("totalRevenue", giaoDichService.getTotalRevenue());
-        model.addAttribute("dailyRevenue", giaoDichService.getDailyRevenue(LocalDate.now()));
-        model.addAttribute("monthlyRevenue", giaoDichService.getMonthlyRevenue(LocalDate.now()));
-        model.addAttribute("averageTransactionValue", giaoDichService.getAverageTransactionValue());
+        
+        Double totalRevenue = giaoDichService.getTotalRevenue();
+        model.addAttribute("totalRevenue", totalRevenue != null ? totalRevenue : 0.0);
+        
+        Double dailyRevenue = giaoDichService.getDailyRevenue(LocalDate.now());
+        model.addAttribute("dailyRevenue", dailyRevenue != null ? dailyRevenue : 0.0);
+        
+        Double monthlyRevenue = giaoDichService.getMonthlyRevenue(LocalDate.now());
+        model.addAttribute("monthlyRevenue", monthlyRevenue != null ? monthlyRevenue : 0.0);
+        
+        Double avgTransValue = giaoDichService.getAverageTransactionValue();
+        model.addAttribute("averageTransactionValue", avgTransValue != null ? avgTransValue : 0.0);
+        
         model.addAttribute("recentTransactions", giaoDichService.getRecentTransactions());
-        model.addAttribute("dailyTransactionCount", giaoDichService.getDailyTransactionCount(LocalDate.now()));
+        
+        Long dailyCount = giaoDichService.getDailyTransactionCount(LocalDate.now());
+        model.addAttribute("dailyTransactionCount", dailyCount != null ? dailyCount : 0L);
+        
         model.addAttribute("pageTitle", "Quản Lý Giao Dịch");
         
         return "giaodich/list";
@@ -191,7 +203,8 @@ public class GiaoDichController {
     public Double getDailyRevenue(@RequestParam String date) {
         try {
             LocalDate filterDate = LocalDate.parse(date);
-            return giaoDichService.getDailyRevenue(filterDate);
+            Double revenue = giaoDichService.getDailyRevenue(filterDate);
+            return revenue != null ? revenue : 0.0;
         } catch (Exception e) {
             return 0.0;
         }
@@ -202,7 +215,8 @@ public class GiaoDichController {
     public Double getMonthlyRevenue(@RequestParam String date) {
         try {
             LocalDate filterDate = LocalDate.parse(date);
-            return giaoDichService.getMonthlyRevenue(filterDate);
+            Double revenue = giaoDichService.getMonthlyRevenue(filterDate);
+            return revenue != null ? revenue : 0.0;
         } catch (Exception e) {
             return 0.0;
         }
@@ -213,7 +227,8 @@ public class GiaoDichController {
     public Long getTransactionCount(@RequestParam String date) {
         try {
             LocalDate filterDate = LocalDate.parse(date);
-            return giaoDichService.getDailyTransactionCount(filterDate);
+            Long count = giaoDichService.getDailyTransactionCount(filterDate);
+            return count != null ? count : 0L;
         } catch (Exception e) {
             return 0L;
         }

@@ -40,13 +40,21 @@ public class NhanVienController {
             model.addAttribute("nhanViens", nhanVienService.getAllNhanVien());
         }
 
-        // Analytics data
+        // Analytics data với null safety
         model.addAttribute("departments", NhanVien.PhongBan.values());
         model.addAttribute("positions", NhanVien.ChucVu.values());
-        model.addAttribute("activeEmployeeCount", nhanVienService.getActiveEmployeeCount());
-        model.addAttribute("averageSalary", nhanVienService.getAverageSalary());
+        
+        Long activeCount = nhanVienService.getActiveEmployeeCount();
+        model.addAttribute("activeEmployeeCount", activeCount != null ? activeCount : 0);
+        
+        Double avgSalary = nhanVienService.getAverageSalary();
+        model.addAttribute("averageSalary", avgSalary != null ? avgSalary : 0.0);
+        
         model.addAttribute("topPerformers", nhanVienService.getTopPerformers());
-        model.addAttribute("totalSalesRevenue", nhanVienService.getTotalSalesRevenue());
+        
+        Double totalSalesRev = nhanVienService.getTotalSalesRevenue();
+        model.addAttribute("totalSalesRevenue", totalSalesRev != null ? totalSalesRev : 0.0);
+        
         model.addAttribute("pageTitle", "Quản Lý Nhân Viên");
 
         return "nhanvien/list";
@@ -59,8 +67,9 @@ public class NhanVienController {
         model.addAttribute("positions", NhanVien.ChucVu.values());
         model.addAttribute("genders", NhanVien.GioiTinh.values());
         model.addAttribute("contractTypes", NhanVien.LoaiHopDong.values());
+        model.addAttribute("isEdit", false);
         model.addAttribute("pageTitle", "Thêm Nhân Viên Mới");
-        return "nhanvien/add";
+        return "nhanvien/form";
     }
 
     @PostMapping("/add")
@@ -74,8 +83,9 @@ public class NhanVienController {
             model.addAttribute("positions", NhanVien.ChucVu.values());
             model.addAttribute("genders", NhanVien.GioiTinh.values());
             model.addAttribute("contractTypes", NhanVien.LoaiHopDong.values());
+            model.addAttribute("isEdit", false);
             model.addAttribute("pageTitle", "Thêm Nhân Viên Mới");
-            return "nhanvien/add";
+            return "nhanvien/form";
         }
 
         // Check if employee code already exists
@@ -85,8 +95,9 @@ public class NhanVienController {
             model.addAttribute("positions", NhanVien.ChucVu.values());
             model.addAttribute("genders", NhanVien.GioiTinh.values());
             model.addAttribute("contractTypes", NhanVien.LoaiHopDong.values());
+            model.addAttribute("isEdit", false);
             model.addAttribute("pageTitle", "Thêm Nhân Viên Mới");
-            return "nhanvien/add";
+            return "nhanvien/form";
         }
 
         try {
@@ -127,8 +138,9 @@ public class NhanVienController {
         model.addAttribute("positions", NhanVien.ChucVu.values());
         model.addAttribute("genders", NhanVien.GioiTinh.values());
         model.addAttribute("contractTypes", NhanVien.LoaiHopDong.values());
+        model.addAttribute("isEdit", true);
         model.addAttribute("pageTitle", "Chỉnh Sửa Nhân Viên");
-        return "nhanvien/edit";
+        return "nhanvien/form";
     }
 
     @PostMapping("/edit/{id}")
@@ -143,8 +155,9 @@ public class NhanVienController {
             model.addAttribute("positions", NhanVien.ChucVu.values());
             model.addAttribute("genders", NhanVien.GioiTinh.values());
             model.addAttribute("contractTypes", NhanVien.LoaiHopDong.values());
+            model.addAttribute("isEdit", true);
             model.addAttribute("pageTitle", "Chỉnh Sửa Nhân Viên");
-            return "nhanvien/edit";
+            return "nhanvien/form";
         }
 
         try {
@@ -222,7 +235,7 @@ public class NhanVienController {
     // API endpoints for HR analytics
     @GetMapping("/api/department-stats")
     @ResponseBody
-    @SuppressWarnings("unused") // ẩn cảnh báo các field của anonymous object không được dùng trực tiếp
+    @SuppressWarnings("unused")
     public Object getDepartmentStatistics() {
         return new Object() {
             public final Long activeEmployees = nhanVienService.getActiveEmployeeCount();

@@ -1,114 +1,217 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <!-- Phần head giống với nhân viên -->
-    <title th:text="${isEdit} ? 'Chỉnh sửa khách hàng' : 'Thêm khách hàng'"></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'Khách Hàng'">Quản Lý Khách Hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <!-- Navigation Bar (giống module Nhân viên) -->
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-birthday-cake me-2"></i>Tiệm Bánh Phenikaa
+            </a>
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
+                <a class="nav-link" href="/sanpham">
+                    <i class="fas fa-birthday-cake me-1"></i> Sản Phẩm
+                </a>
+                <a class="nav-link active" href="/khachhang">
+                    <i class="fas fa-users me-1"></i> Khách Hàng
+                </a>
+                <a class="nav-link" href="/nhanvien">
+                    <i class="fas fa-user-tie me-1"></i> Nhân Viên
+                </a>
+                <a class="nav-link" href="/giaodich">
+                    <i class="fas fa-receipt me-1"></i> Giao Dịch
+                </a>
+            </div>
+        </div>
+    </nav>
 
+    <!-- Main Content -->
     <div class="container mt-4">
-        <div class="form-container p-4">
+        <div class="card p-4">
             <!-- Form Header -->
-            <div class="form-header pb-3 mb-4">
-                <h2 class="text-center">
-                    <i class="fas fa-user-plus me-2"></i>
-                    <span th:text="${isEdit} ? 'Chỉnh sửa khách hàng' : 'Thêm khách hàng mới'"></span>
+            <div class="text-center mb-4 pb-3 border-bottom">
+                <h2>
+                    <i th:class="${isEdit} ? 'fas fa-edit text-primary' : 'fas fa-user-plus text-success'" class="me-2"></i>
+                    <span th:text="${isEdit} ? 'Chỉnh Sửa Khách Hàng' : 'Thêm Khách Hàng Mới'">Thêm Khách Hàng</span>
                 </h2>
+                <p class="text-muted mb-0">Điền thông tin chi tiết để quản lý khách hàng</p>
+            </div>
+
+            <!-- Error Messages -->
+            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                <h6><i class="fas fa-exclamation-circle me-2"></i>Có lỗi xảy ra:</h6>
+                <ul class="mb-0">
+                    <li th:each="error : ${#fields.errors('*')}" th:text="${error}">Lỗi validation</li>
+                </ul>
             </div>
 
             <!-- Customer Form -->
-            <form th:action="${isEdit ? '/khachhang/' + khachHang.id : '/khachhang'}" 
-                  method="post" enctype="multipart/form-data" th:object="${khachHang}">
+            <form th:action="${isEdit ? '/khachhang/edit/' + khachHang.id : '/khachhang/add'}" 
+                  method="post" th:object="${khachHang}">
                 
                 <div class="row">
                     <!-- Left Column -->
                     <div class="col-md-6">
-                        <!-- Avatar Upload -->
+                        <!-- Avatar Preview -->
                         <div class="text-center mb-4">
-                            <div class="avatar-upload mx-auto" 
-                                 th:style="'background-image: url(' + (${khachHang.anhDaiDien} ?: 'https://i.pravatar.cc/150') + ')'"
-                                 onclick="document.getElementById('avatarInput').click()">
-                                <input type="file" id="avatarInput" name="avatarFile" 
-                                       accept="image/*" style="display: none;" 
-                                       onchange="previewAvatar(this)">
-                                <div class="h-100 d-flex align-items-end justify-content-center pb-3">
-                                    <span class="badge bg-primary">
-                                        <i class="fas fa-camera me-1"></i>Đổi ảnh
-                                    </span>
-                                </div>
+                            <img id="avatarPreview" 
+                                 th:src="${khachHang.avatarUrl} ?: 'https://images.unsplash.com/photo-1494790108755-2616b612b5c5?w=150&h=150&fit=crop&crop=face'" 
+                                 class="rounded-circle border border-3" 
+                                 width="120" height="120"
+                                 style="object-fit: cover;">
+                            <div class="mt-2">
+                                <small class="text-muted">Avatar được tạo tự động</small>
                             </div>
                         </div>
 
-                        <!-- Basic Info -->
+                        <!-- Mã Khách Hàng -->
                         <div class="mb-3">
-                            <label class="form-label"><i class="fas fa-id-card me-2"></i>Mã KH</label>
-                            <input th:field="*{maKhachHang}" type="text" class="form-control" readonly>
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-id-card me-2"></i>Mã Khách Hàng <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="text" th:field="*{maKhachHang}" class="form-control" 
+                                       placeholder="KH001" required readonly>
+                                <button type="button" class="btn btn-accent" onclick="generateCustomerCode()" th:if="${!isEdit}">
+                                    <i class="fas fa-magic"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">Mã được tạo tự động theo định dạng KH + 3 số</small>
                         </div>
 
+                        <!-- Họ Tên -->
                         <div class="mb-3">
-                            <label class="form-label"><i class="fas fa-user me-2"></i>Họ tên <span class="text-danger">*</span></label>
-                            <input th:field="*{hoTen}" type="text" class="form-control" required>
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-user me-2"></i>Họ Tên <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" th:field="*{hoTen}" class="form-control" 
+                                   placeholder="Nguyễn Văn A" required oninput="updatePreview()">
                         </div>
 
+                        <!-- Giới Tính -->
                         <div class="mb-3">
-                            <label class="form-label"><i class="fas fa-venus-mars me-2"></i>Giới tính</label>
-                            <select th:field="*{gioiTinh}" class="form-select">
-                                <option value="NAM">Nam</option>
-                                <option value="NU">Nữ</option>
-                                <option value="KHAC">Khác</option>
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-venus-mars me-2"></i>Giới Tính
+                            </label>
+                            <select th:field="*{gioiTinh}" class="form-select" onchange="updatePreview()">
+                                <option value="">Chọn giới tính</option>
+                                <option th:each="gender : ${genders}" 
+                                        th:value="${gender}" 
+                                        th:text="${gender.icon + ' ' + gender.ten}"
+                                        th:selected="${gender == khachHang.gioiTinh}">
+                                    👨 Nam
+                                </option>
                             </select>
+                        </div>
+
+                        <!-- Ngày Sinh -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-birthday-cake me-2"></i>Ngày Sinh
+                            </label>
+                            <input type="date" th:field="*{ngaySinh}" class="form-control" 
+                                   th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
                         </div>
                     </div>
 
                     <!-- Right Column -->
                     <div class="col-md-6">
-                        <!-- Contact Info -->
+                        <!-- Số Điện Thoại -->
                         <div class="mb-3">
-                            <label class="form-label"><i class="fas fa-phone me-2"></i>SĐT <span class="text-danger">*</span></label>
-                            <input th:field="*{soDienThoai}" type="tel" class="form-control" required>
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-phone me-2"></i>Số Điện Thoại <span class="text-danger">*</span>
+                            </label>
+                            <input type="tel" th:field="*{soDienThoai}" class="form-control" 
+                                   placeholder="0987654321" required pattern="^(0|\+84)[0-9]{9}$">
+                            <small class="text-muted">Định dạng: 0987654321 hoặc +84987654321</small>
                         </div>
 
+                        <!-- Email -->
                         <div class="mb-3">
-                            <label class="form-label"><i class="fas fa-envelope me-2"></i>Email</label>
-                            <input th:field="*{email}" type="email" class="form-control">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-envelope me-2"></i>Email
+                            </label>
+                            <input type="email" th:field="*{email}" class="form-control" 
+                                   placeholder="email@example.com">
                         </div>
 
+                        <!-- Địa Chỉ -->
                         <div class="mb-3">
-                            <label class="form-label"><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ</label>
-                            <input th:field="*{diaChi}" type="text" class="form-control">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-map-marker-alt me-2"></i>Địa Chỉ
+                            </label>
+                            <textarea th:field="*{diaChi}" class="form-control" rows="2" 
+                                      placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"></textarea>
                         </div>
 
-                        <!-- Customer Type -->
+                        <!-- Khu Vực -->
                         <div class="mb-3">
-                            <label class="form-label"><i class="fas fa-crown me-2"></i>Loại khách hàng</label>
-                            <select th:field="*{loaiKhachHang}" class="form-select">
-                                <option value="VIP">VIP</option>
-                                <option value="THUONG">Thường</option>
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-location-dot me-2"></i>Khu Vực
+                            </label>
+                            <select th:field="*{khuVuc}" class="form-select">
+                                <option value="">Chọn khu vực</option>
+                                <option value="Ba Đình">Ba Đình</option>
+                                <option value="Hoàn Kiếm">Hoàn Kiếm</option>
+                                <option value="Hai Bà Trưng">Hai Bà Trưng</option>
+                                <option value="Đống Đa">Đống Đa</option>
+                                <option value="Tây Hồ">Tây Hồ</option>
+                                <option value="Cầu Giấy">Cầu Giấy</option>
+                                <option value="Thanh Xuân">Thanh Xuân</option>
+                                <option value="Hoàng Mai">Hoàng Mai</option>
+                                <option value="Long Biên">Long Biên</option>
+                                <option value="Nam Từ Liêm">Nam Từ Liêm</option>
+                                <option value="Bắc Từ Liêm">Bắc Từ Liêm</option>
+                                <option value="Hà Đông">Hà Đông</option>
                             </select>
                         </div>
 
-                        <!-- Membership Card -->
+                        <!-- Ghi Chú -->
                         <div class="mb-3">
-                            <label class="form-label"><i class="fas fa-id-card me-2"></i>Thẻ thành viên</label>
-                            <div class="membership-card bg-gradient-primary text-white p-3 rounded">
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <h6 class="mb-1">TIỆM BÁNH PHENIKAA</h6>
-                                        <small>Thành viên</small>
-                                    </div>
-                                    <div class="text-end">
-                                        <small>Mã số</small>
-                                        <h5 th:text="${khachHang.maKhachHang} ?: 'KH001'">KH001</h5>
-                                    </div>
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-sticky-note me-2"></i>Ghi Chú
+                            </label>
+                            <textarea th:field="*{ghiChu}" class="form-control" rows="3" 
+                                      placeholder="Ghi chú về khách hàng (sở thích, yêu cầu đặc biệt...)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Preview Card -->
+                <div class="card mt-4 p-3" style="background: var(--light-pink);">
+                    <h6><i class="fas fa-eye me-2"></i>Xem Trước Thông Tin Khách Hàng</h6>
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            <img id="previewAvatar" 
+                                 th:src="${khachHang.avatarUrl} ?: 'https://images.unsplash.com/photo-1494790108755-2616b612b5c5?w=80&h=80&fit=crop&crop=face'" 
+                                 class="rounded-circle" width="60" height="60">
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Mã KH:</strong> <span id="previewCode" th:text="${khachHang.maKhachHang} ?: 'KH001'">KH001</span><br>
+                                    <strong>Họ tên:</strong> <span id="previewName" th:text="${khachHang.hoTen} ?: 'Chưa nhập'">Chưa nhập</span>
                                 </div>
-                                <div class="text-center my-2">
-                                    <img th:src="${khachHang.anhDaiDien} ?: 'https://i.pravatar.cc/150'" 
-                                         width="60" class="rounded-circle border border-3">
+                                <div class="col-md-4">
+                                    <strong>SĐT:</strong> <span id="previewPhone" th:text="${khachHang.soDienThoai} ?: 'Chưa nhập'">Chưa nhập</span><br>
+                                    <strong>Email:</strong> <span id="previewEmail" th:text="${khachHang.email} ?: 'Chưa có'">Chưa có</span>
                                 </div>
-                                <div class="text-center">
-                                    <h5 th:text="${khachHang.hoTen} ?: 'Họ tên'">Nguyễn Văn A</h5>
-                                    <small th:text="${khachHang.loaiKhachHang == 'VIP'} ? 'VIP Member' : 'Standard Member'">VIP Member</small>
+                                <div class="col-md-4">
+                                    <strong>Loại KH:</strong> 
+                                    <span class="badge bg-secondary" id="previewType"
+                                          th:text="${khachHang.loaiKhachHang?.ten} ?: 'Thường'">Thường</span><br>
+                                    <strong>Trạng thái:</strong> 
+                                    <span class="badge bg-success">Hoạt động</span>
                                 </div>
                             </div>
                         </div>
@@ -118,15 +221,15 @@
                 <!-- Form Actions -->
                 <div class="d-flex justify-content-between mt-4">
                     <a href="/khachhang" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Quay lại
+                        <i class="fas fa-arrow-left me-2"></i>Quay Lại
                     </a>
                     <div>
-                        <button type="reset" class="btn btn-outline-danger me-2">
-                            <i class="fas fa-undo me-2"></i>Nhập lại
+                        <button type="button" class="btn btn-outline-warning me-2" onclick="resetForm()" th:if="${!isEdit}">
+                            <i class="fas fa-undo me-2"></i>Làm Mới
                         </button>
                         <button type="submit" class="btn btn-primary">
                             <i th:class="${isEdit} ? 'fas fa-save' : 'fas fa-plus'" class="me-2"></i>
-                            <span th:text="${isEdit} ? 'Cập nhật' : 'Thêm mới'"></span>
+                            <span th:text="${isEdit} ? 'Cập Nhật' : 'Thêm Khách Hàng'}">Thêm Khách Hàng</span>
                         </button>
                     </div>
                 </div>
@@ -134,24 +237,152 @@
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // Tự động sinh mã KH khi chọn loại
+        // Generate customer code automatically
         function generateCustomerCode() {
-            const type = document.querySelector('select[name="loaiKhachHang"]').value;
-            const prefix = type === 'VIP' ? 'VIP' : 'KH';
-            const randomNum = Math.floor(1000 + Math.random() * 9000);
-            document.querySelector('input[name="maKhachHang"]').value = prefix + randomNum;
+            const randomNum = String(Math.floor(Math.random() * 900) + 100).padStart(3, '0');
+            const code = 'KH' + randomNum;
+            document.querySelector('input[name="maKhachHang"]').value = code;
+            updatePreview();
         }
 
-        // Gọi hàm khi loại KH thay đổi
-        document.querySelector('select[name="loaiKhachHang"]').addEventListener('change', generateCustomerCode);
-        
-        // Khởi tạo mã nếu chưa có
+        // Update preview when form changes
+        function updatePreview() {
+            const code = document.querySelector('input[name="maKhachHang"]').value || 'KH001';
+            const name = document.querySelector('input[name="hoTen"]').value || 'Chưa nhập';
+            const phone = document.querySelector('input[name="soDienThoai"]').value || 'Chưa nhập';
+            const email = document.querySelector('input[name="email"]').value || 'Chưa có';
+            const gender = document.querySelector('select[name="gioiTinh"]').value;
+
+            document.getElementById('previewCode').textContent = code;
+            document.getElementById('previewName').textContent = name;
+            document.getElementById('previewPhone').textContent = phone;
+            document.getElementById('previewEmail').textContent = email;
+
+            // Update avatar based on gender
+            const avatarPreview = document.getElementById('avatarPreview');
+            const previewAvatar = document.getElementById('previewAvatar');
+            
+            let avatarUrl = 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&fit=crop&crop=face';
+            if (gender === 'NAM') {
+                avatarUrl = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face';
+            } else if (gender === 'NU') {
+                avatarUrl = 'https://images.unsplash.com/photo-1494790108755-2616b612b5c5?w=150&h=150&fit=crop&crop=face';
+            }
+            
+            avatarPreview.src = avatarUrl;
+            previewAvatar.src = avatarUrl.replace('150', '80');
+        }
+
+        // Reset form
+        function resetForm() {
+            if (confirm('Bạn có chắc muốn làm mới form? Dữ liệu đã nhập sẽ bị mất.')) {
+                document.querySelector('form').reset();
+                generateCustomerCode();
+                updatePreview();
+            }
+        }
+
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Generate code if not editing and no code exists
             if (!document.querySelector('input[name="maKhachHang"]').value) {
                 generateCustomerCode();
             }
+            
+            updatePreview();
+
+            // Add event listeners for real-time preview updates
+            const inputs = ['hoTen', 'soDienThoai', 'email'];
+            inputs.forEach(name => {
+                const element = document.querySelector(`input[name="${name}"], select[name="${name}"]`);
+                if (element) {
+                    element.addEventListener('input', updatePreview);
+                    element.addEventListener('change', updatePreview);
+                }
+            });
+
+            // Form validation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Vui lòng điền đầy đủ các trường bắt buộc!');
+                }
+            });
+
+            // Phone number validation
+            const phoneInput = document.querySelector('input[name="soDienThoai"]');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function() {
+                    const value = this.value;
+                    const pattern = /^(0|\+84)[0-9]{9}$/;
+                    
+                    if (value && !pattern.test(value)) {
+                        this.classList.add('is-invalid');
+                        this.setCustomValidity('Số điện thoại không đúng định dạng');
+                    } else {
+                        this.classList.remove('is-invalid');
+                        this.setCustomValidity('');
+                    }
+                });
+            }
+
+            // Email validation
+            const emailInput = document.querySelector('input[name="email"]');
+            if (emailInput) {
+                emailInput.addEventListener('input', function() {
+                    const value = this.value;
+                    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    
+                    if (value && !pattern.test(value)) {
+                        this.classList.add('is-invalid');
+                        this.setCustomValidity('Email không đúng định dạng');
+                    } else {
+                        this.classList.remove('is-invalid');
+                        this.setCustomValidity('');
+                    }
+                });
+            }
         });
     </script>
+
+    <style>
+        .is-invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 0.2rem rgba(248, 187, 208, 0.25);
+        }
+        
+        .btn-accent {
+            background: var(--mint);
+            border: 1px solid var(--mint);
+            color: #333;
+        }
+        
+        .btn-accent:hover {
+            background: var(--sage);
+            border-color: var(--sage);
+        }
+    </style>
 </body>
 </html>

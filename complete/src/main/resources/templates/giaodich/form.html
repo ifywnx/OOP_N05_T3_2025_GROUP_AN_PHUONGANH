@@ -1,139 +1,281 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <!-- Phần head giống với nhân viên -->
-    <title>Tạo Giao Dịch Mới</title>
-    <style>
-        .product-item {
-            border-bottom: 1px dashed #eee;
-            padding: 10px 0;
-        }
-        .cart-summary {
-            background: var(--bakery-light-pink);
-            border-radius: 10px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Giao Dịch - Tiệm Bánh Phenikaa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <!-- Navigation Bar (giống module Nhân viên) -->
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-birthday-cake me-2"></i>Tiệm Bánh Phenikaa
+            </a>
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
+                <a class="nav-link" href="/sanpham">
+                    <i class="fas fa-birthday-cake me-1"></i> Sản Phẩm
+                </a>
+                <a class="nav-link" href="/khachhang">
+                    <i class="fas fa-users me-1"></i> Khách Hàng
+                </a>
+                <a class="nav-link" href="/nhanvien">
+                    <i class="fas fa-user-tie me-1"></i> Nhân Viên
+                </a>
+                <a class="nav-link active" href="/giaodich">
+                    <i class="fas fa-receipt me-1"></i> Giao Dịch
+                </a>
+            </div>
+        </div>
+    </nav>
 
+    <!-- Main Content -->
     <div class="container-fluid mt-4">
         <div class="row">
             <!-- Left Column - Product Selection -->
             <div class="col-md-8">
+                <!-- Page Header -->
+                <div class="card mb-4 p-4">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h2 class="mb-2">
+                                <i class="fas fa-plus text-primary me-3"></i>Tạo Giao Dịch Mới
+                            </h2>
+                            <p class="text-muted mb-0">Chọn sản phẩm và khách hàng để tạo đơn hàng</p>
+                        </div>
+                        <div class="col-4 text-end">
+                            <a href="/giaodich" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Quay Lại
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Search -->
                 <div class="card mb-4">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="fas fa-birthday-cake me-2"></i>Chọn Sản Phẩm</h5>
+                        <h5 class="mb-0"><i class="fas fa-search me-2"></i>Tìm Sản Phẩm</h5>
                     </div>
                     <div class="card-body">
-                        <!-- Product Search -->
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Tìm sản phẩm..." id="productSearch">
-                            <button class="btn btn-primary" type="button">
+                            <input type="text" class="form-control" placeholder="Tìm theo tên sản phẩm..." id="productSearch">
+                            <button class="btn btn-primary" type="button" onclick="searchProducts()">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
+                        
+                        <!-- Category Filter -->
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-outline-primary btn-sm active" data-category="all" onclick="filterByCategory('all')">
+                                Tất cả
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" data-category="BANH_KEM" onclick="filterByCategory('BANH_KEM')">
+                                🎂 Bánh Kem
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" data-category="BANH_NGOT" onclick="filterByCategory('BANH_NGOT')">
+                                🧁 Bánh Ngọt
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" data-category="BANH_MI" onclick="filterByCategory('BANH_MI')">
+                                🥖 Bánh Mì
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" data-category="DO_UONG" onclick="filterByCategory('DO_UONG')">
+                                ☕ Đồ Uống
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" data-category="BANH_QUY" onclick="filterByCategory('BANH_QUY')">
+                                🍪 Bánh Quy
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                        <!-- Product List -->
+                <!-- Product List -->
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="fas fa-birthday-cake me-2"></i>Danh Sách Sản Phẩm</h5>
+                    </div>
+                    <div class="card-body">
                         <div class="row" id="productList">
-                            <div class="col-md-4 mb-3" th:each="sp : ${sanPhams}">
-                                <div class="card product-card">
-                                    <img th:src="${sp.anhDaiDien}" class="card-img-top">
-                                    <div class="card-body">
-                                        <h6 th:text="${sp.tenSanPham}">Bánh kem</h6>
-                                        <p class="text-primary fw-bold" 
-                                           th:text="${#numbers.formatDecimal(sp.giaBan, 0, 'COMMA', 0, 'POINT')} + '₫'">
-                                            180,000₫
+                            <div class="col-md-6 col-lg-4 mb-3" th:each="sp : ${sanPhams}">
+                                <div class="card product-card h-100" th:data-category="${sp.danhMuc.name()}" th:data-id="${sp.id}">
+                                    <img th:src="${sp.imageUrl}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title mb-2" th:text="${sp.tenSanPham}">Sản phẩm</h6>
+                                        <p class="text-primary fw-bold mb-2" th:text="${#numbers.formatDecimal(sp.giaBan, 0, 'COMMA', 0, 'POINT')} + '₫'">100,000₫</p>
+                                        <p class="text-muted small mb-2">
+                                            Còn: <span th:text="${sp.soLuongTonKho}">10</span> |
+                                            <span class="badge bg-light text-dark" th:text="${sp.danhMuc.icon}">🎂</span>
                                         </p>
-                                        <div class="d-flex align-items-center">
-                                            <button class="btn btn-sm btn-outline-secondary" 
-                                                    onclick="adjustQuantity(this, -1)">
+                                        
+                                        <!-- Quantity Controls -->
+                                        <div class="d-flex align-items-center mb-3">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="decreaseQuantity(this)">
                                                 <i class="fas fa-minus"></i>
                                             </button>
-                                            <input type="number" value="1" min="1" 
-                                                   class="form-control form-control-sm mx-2 text-center" 
-                                                   style="width: 50px;">
-                                            <button class="btn btn-sm btn-outline-secondary" 
-                                                    onclick="adjustQuantity(this, 1)">
+                                            <input type="number" class="form-control form-control-sm mx-2 text-center quantity-input" 
+                                                   value="1" min="1" th:max="${sp.soLuongTonKho}" style="width: 60px;">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="increaseQuantity(this)">
                                                 <i class="fas fa-plus"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-primary ms-auto" 
-                                                    th:onclick="'addToCart(' + ${sp.id} + ', this)'">
-                                                <i class="fas fa-cart-plus"></i>
-                                            </button>
                                         </div>
+                                        
+                                        <!-- Add to Cart Button -->
+                                        <button class="btn btn-primary btn-sm w-100" 
+                                                th:onclick="'addToCart(' + ${sp.id} + ', this)'"
+                                                th:disabled="${sp.soLuongTonKho <= 0}">
+                                            <i class="fas fa-plus me-1"></i>
+                                            <span th:text="${sp.soLuongTonKho > 0 ? 'Thêm vào đơn' : 'Hết hàng'}">Thêm vào đơn</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Empty Product State -->
+                        <div id="emptyProductState" class="text-center py-4" style="display: none;">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Không tìm thấy sản phẩm</h5>
+                            <p class="text-muted">Thử thay đổi từ khóa tìm kiếm</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column - Cart & Customer -->
+            <!-- Right Column - Cart & Customer Info -->
             <div class="col-md-4">
+                <!-- Customer Selection -->
                 <div class="card mb-4">
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-user me-2"></i>Thông Tin Khách Hàng</h5>
                     </div>
                     <div class="card-body">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Tìm khách hàng..." id="customerSearch">
-                            <button class="btn btn-primary" type="button">
-                                <i class="fas fa-search"></i>
-                            </button>
+                        <div class="mb-3">
+                            <label class="form-label">Tìm khách hàng</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="SĐT hoặc tên..." id="customerSearch">
+                                <button class="btn btn-outline-primary" type="button" onclick="searchCustomer()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
                         </div>
                         
                         <!-- Selected Customer -->
-                        <div class="selected-customer p-3 mb-3" th:if="${khachHang}" style="background: #f8f9fa; border-radius: 8px;">
+                        <div class="selected-customer p-3 mb-3" id="selectedCustomer" style="background: var(--light-pink); border-radius: 8px; display: none;">
                             <div class="d-flex align-items-center">
-                                <img th:src="${khachHang.anhDaiDien}" width="50" class="rounded-circle me-3">
-                                <div>
-                                    <h6 class="mb-1" th:text="${khachHang.hoTen}">Nguyễn Văn A</h6>
-                                    <p class="mb-1 text-muted" th:text="${khachHang.soDienThoai}">0987654321</p>
-                                    <span class="badge bg-warning" th:text="${khachHang.loaiKhachHang}">VIP</span>
+                                <img id="customerAvatar" width="50" class="rounded-circle me-3">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1" id="customerName">Khách hàng</h6>
+                                    <p class="mb-1 small text-muted" id="customerPhone">SĐT</p>
+                                    <span class="badge" id="customerType">Thường</span>
                                 </div>
+                                <button class="btn btn-sm btn-outline-danger" onclick="clearCustomer()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer List -->
+                        <div id="customerList" style="display: none;">
+                            <div class="list-group">
+                                <button type="button" class="list-group-item list-group-item-action" 
+                                        th:each="kh : ${khachHangs}"
+                                        th:onclick="'selectCustomer(' + ${kh.id} + ', \'' + ${kh.hoTen} + '\', \'' + ${kh.soDienThoai} + '\', \'' + ${kh.loaiKhachHang.ten} + '\', \'' + ${kh.avatarUrl} + '\')'">
+                                    <div class="d-flex align-items-center">
+                                        <img th:src="${kh.avatarUrl}" width="40" class="rounded-circle me-3">
+                                        <div>
+                                            <h6 class="mb-1" th:text="${kh.hoTen}">Tên</h6>
+                                            <small th:text="${kh.soDienThoai}">SĐT</small>
+                                        </div>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                         
                         <!-- New Customer Button -->
-                        <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#newCustomerModal">
-                            <i class="fas fa-plus me-2"></i>Thêm khách hàng mới
+                        <button class="btn btn-outline-success w-100" data-bs-toggle="modal" data-bs-target="#newCustomerModal">
+                            <i class="fas fa-plus me-2"></i>Khách hàng mới
                         </button>
                     </div>
                 </div>
 
-                <!-- Cart Summary -->
-                <div class="card">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Giỏ Hàng</h5>
+                <!-- Cart -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Đơn Hàng</h5>
+                        <span class="badge bg-primary" id="cartCount">0</span>
                     </div>
                     <div class="card-body">
                         <div id="cartItems">
-                            <!-- Cart items will be added here dynamically -->
                             <div class="text-center text-muted py-4">
                                 <i class="fas fa-shopping-cart fa-3x mb-3"></i>
-                                <p>Giỏ hàng trống</p>
+                                <p>Chưa có sản phẩm</p>
                             </div>
                         </div>
                         
-                        <div class="cart-summary p-3 mt-3">
+                        <!-- Cart Summary -->
+                        <div class="border-top pt-3 mt-3" id="cartSummary" style="display: none;">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Tạm tính:</span>
                                 <span id="subtotal">0₫</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Giảm giá:</span>
-                                <span id="discount">0₫</span>
+                                <span id="discount" class="text-success">0₫</span>
                             </div>
-                            <div class="d-flex justify-content-between fw-bold fs-5">
+                            <div class="d-flex justify-content-between fw-bold fs-5 text-primary">
                                 <span>Tổng cộng:</span>
                                 <span id="total">0₫</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Employee & Payment -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Thanh Toán</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nhân viên bán hàng</label>
+                            <select class="form-select" id="nhanVienSelect" required>
+                                <option value="">Chọn nhân viên</option>
+                                <option th:each="nv : ${nhanViens}" 
+                                        th:value="${nv.maNhanVien}" 
+                                        th:text="${nv.hoTen + ' (' + nv.maNhanVien + ')'}">
+                                    Nhân viên
+                                </option>
+                            </select>
+                        </div>
                         
-                        <button class="btn btn-primary w-100 mt-3" id="checkoutBtn">
-                            <i class="fas fa-credit-card me-2"></i>Xác Nhận Thanh Toán
+                        <div class="mb-3">
+                            <label class="form-label">Phương thức thanh toán</label>
+                            <select class="form-select" id="paymentMethodSelect" required>
+                                <option value="">Chọn phương thức</option>
+                                <option th:each="method : ${paymentMethods}" 
+                                        th:value="${method}" 
+                                        th:text="${method.icon + ' ' + method.ten}">
+                                    💵 Tiền mặt
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3" id="cashPaymentSection" style="display: none;">
+                            <label class="form-label">Tiền khách đưa</label>
+                            <input type="number" class="form-control" id="customerPaid" placeholder="Số tiền khách đưa">
+                            <div class="mt-2">
+                                <small class="text-muted">Tiền thừa: </small>
+                                <span class="fw-bold text-success" id="changeAmount">0₫</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-success w-100" id="createTransactionBtn" onclick="createTransaction()" disabled>
+                            <i class="fas fa-check me-2"></i>Tạo Giao Dịch
                         </button>
                     </div>
                 </div>
@@ -142,131 +284,419 @@
     </div>
 
     <!-- New Customer Modal -->
-    <div class="modal fade" id="newCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="newCustomerModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Thêm Khách Hàng Mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Simple Customer Form -->
-                    <div class="mb-3">
-                        <label class="form-label">Họ tên</label>
-                        <input type="text" class="form-control" id="newCustomerName">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Số điện thoại</label>
-                        <input type="tel" class="form-control" id="newCustomerPhone">
-                    </div>
+                    <form id="newCustomerForm">
+                        <div class="mb-3">
+                            <label class="form-label">Họ tên *</label>
+                            <input type="text" class="form-control" id="newCustomerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Số điện thoại *</label>
+                            <input type="tel" class="form-control" id="newCustomerPhone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="newCustomerEmail">
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary" onclick="addNewCustomer()">Lưu</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewCustomer()">Thêm</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         let cart = [];
-        
-        // Thêm sản phẩm vào giỏ
+        let selectedCustomer = null;
+        let totalAmount = 0;
+
+        // Product functions
+        function searchProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const products = document.querySelectorAll('.product-card');
+            let hasResults = false;
+
+            products.forEach(product => {
+                const name = product.querySelector('.card-title').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    product.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+
+            document.getElementById('emptyProductState').style.display = hasResults ? 'none' : 'block';
+        }
+
+        function filterByCategory(category) {
+            // Update active button
+            document.querySelectorAll('[data-category]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+
+            // Filter products
+            const products = document.querySelectorAll('.product-card');
+            let hasResults = false;
+
+            products.forEach(product => {
+                if (category === 'all' || product.dataset.category === category) {
+                    product.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+
+            document.getElementById('emptyProductState').style.display = hasResults ? 'none' : 'block';
+        }
+
+        function increaseQuantity(btn) {
+            const input = btn.previousElementSibling;
+            const max = parseInt(input.getAttribute('max'));
+            const current = parseInt(input.value);
+            if (current < max) {
+                input.value = current + 1;
+            }
+        }
+
+        function decreaseQuantity(btn) {
+            const input = btn.nextElementSibling;
+            const current = parseInt(input.value);
+            if (current > 1) {
+                input.value = current - 1;
+            }
+        }
+
         function addToCart(productId, button) {
             const card = button.closest('.product-card');
-            const quantity = parseInt(card.querySelector('input').value);
-            const product = {
-                id: productId,
-                name: card.querySelector('h6').textContent,
-                price: parseFloat(card.querySelector('p').textContent.replace(/[^\d]/g, '')),
-                quantity: quantity
-            };
+            const name = card.querySelector('.card-title').textContent;
+            const priceText = card.querySelector('.text-primary').textContent;
+            const price = parseFloat(priceText.replace(/[₫,]/g, ''));
+            const quantity = parseInt(card.querySelector('.quantity-input').value);
             
-            // Kiểm tra nếu sản phẩm đã có trong giỏ
             const existingItem = cart.find(item => item.id === productId);
             if (existingItem) {
                 existingItem.quantity += quantity;
             } else {
-                cart.push(product);
+                cart.push({
+                    id: productId,
+                    name: name,
+                    price: price,
+                    quantity: quantity
+                });
             }
             
-            updateCart();
-            showToast('Đã thêm vào giỏ hàng!', 'success');
+            updateCartDisplay();
+            showToast('Đã thêm vào đơn hàng!', 'success');
         }
-        
-        // Cập nhật giỏ hàng
-        function updateCart() {
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
             const cartItems = document.getElementById('cartItems');
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const discount = 0; // Có thể thêm logic giảm giá sau
-            const total = subtotal - discount;
+            const cartCount = document.getElementById('cartCount');
+            const cartSummary = document.getElementById('cartSummary');
+            
+            cartCount.textContent = cart.length;
             
             if (cart.length === 0) {
                 cartItems.innerHTML = `
                     <div class="text-center text-muted py-4">
                         <i class="fas fa-shopping-cart fa-3x mb-3"></i>
-                        <p>Giỏ hàng trống</p>
+                        <p>Chưa có sản phẩm</p>
                     </div>
                 `;
+                cartSummary.style.display = 'none';
+                totalAmount = 0;
             } else {
                 cartItems.innerHTML = cart.map(item => `
-                    <div class="product-item">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="mb-1">${item.name}</h6>
-                                <small class="text-muted">${item.price.toLocaleString()}₫ x ${item.quantity}</small>
-                            </div>
-                            <div class="text-end">
-                                <h6 class="mb-1">${(item.price * item.quantity).toLocaleString()}₫</h6>
-                                <button class="btn btn-sm btn-outline-danger" 
-                                        onclick="removeFromCart(${item.id})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${item.name}</h6>
+                            <small class="text-muted">${item.price.toLocaleString()}₫ x ${item.quantity}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">${(item.price * item.quantity).toLocaleString()}₫</div>
+                            <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(${item.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 `).join('');
+                
+                cartSummary.style.display = 'block';
+                calculateTotal();
             }
+            
+            updateCreateButton();
+        }
+
+        function calculateTotal() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            let discount = 0;
+            
+            // Apply customer discount
+            if (selectedCustomer && selectedCustomer.type === 'VIP') {
+                discount = subtotal * 0.1; // 10% VIP discount
+            } else if (selectedCustomer && selectedCustomer.type === 'Premium') {
+                discount = subtotal * 0.05; // 5% Premium discount
+            }
+            
+            totalAmount = subtotal - discount;
             
             document.getElementById('subtotal').textContent = subtotal.toLocaleString() + '₫';
             document.getElementById('discount').textContent = discount.toLocaleString() + '₫';
-            document.getElementById('total').textContent = total.toLocaleString() + '₫';
+            document.getElementById('total').textContent = totalAmount.toLocaleString() + '₫';
+            
+            calculateChange();
         }
-        
-        // Xóa sản phẩm khỏi giỏ
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCart();
+
+        // Customer functions
+        function searchCustomer() {
+            const searchTerm = document.getElementById('customerSearch').value;
+            if (searchTerm.length >= 3) {
+                document.getElementById('customerList').style.display = 'block';
+            } else {
+                document.getElementById('customerList').style.display = 'none';
+            }
         }
-        
-        // Thanh toán
-        document.getElementById('checkoutBtn').addEventListener('click', function() {
+
+        function selectCustomer(id, name, phone, type, avatar) {
+            selectedCustomer = { id, name, phone, type, avatar };
+            
+            document.getElementById('customerAvatar').src = avatar;
+            document.getElementById('customerName').textContent = name;
+            document.getElementById('customerPhone').textContent = phone;
+            document.getElementById('customerType').textContent = type;
+            document.getElementById('customerType').className = `badge ${type === 'VIP' ? 'bg-warning text-dark' : type === 'Premium' ? 'bg-info' : 'bg-secondary'}`;
+            
+            document.getElementById('selectedCustomer').style.display = 'block';
+            document.getElementById('customerList').style.display = 'none';
+            document.getElementById('customerSearch').value = '';
+            
+            calculateTotal();
+            updateCreateButton();
+        }
+
+        function clearCustomer() {
+            selectedCustomer = null;
+            document.getElementById('selectedCustomer').style.display = 'none';
+            calculateTotal();
+            updateCreateButton();
+        }
+
+        function addNewCustomer() {
+            const name = document.getElementById('newCustomerName').value;
+            const phone = document.getElementById('newCustomerPhone').value;
+            const email = document.getElementById('newCustomerEmail').value;
+            
+            if (name && phone) {
+                // In real app, this would make an API call
+                const avatar = 'https://images.unsplash.com/photo-1494790108755-2616b612b5c5?w=150&h=150&fit=crop&crop=face';
+                selectCustomer(Date.now(), name, phone, 'Thường', avatar);
+                
+                bootstrap.Modal.getInstance(document.getElementById('newCustomerModal')).hide();
+                document.getElementById('newCustomerForm').reset();
+                showToast('Đã thêm khách hàng mới!', 'success');
+            }
+        }
+
+        // Payment functions
+        function calculateChange() {
+            const customerPaid = parseFloat(document.getElementById('customerPaid').value) || 0;
+            const change = Math.max(0, customerPaid - totalAmount);
+            document.getElementById('changeAmount').textContent = change.toLocaleString() + '₫';
+        }
+
+        function updateCreateButton() {
+            const hasProducts = cart.length > 0;
+            const hasEmployee = document.getElementById('nhanVienSelect').value !== '';
+            const hasPaymentMethod = document.getElementById('paymentMethodSelect').value !== '';
+            
+            document.getElementById('createTransactionBtn').disabled = !(hasProducts && hasEmployee && hasPaymentMethod);
+        }
+
+        function createTransaction() {
             if (cart.length === 0) {
-                alert('Giỏ hàng trống!');
+                showToast('Vui lòng chọn sản phẩm!', 'error');
                 return;
             }
             
-            const customerId = 1; // Lấy từ form khách hàng
+            const customerPaid = parseFloat(document.getElementById('customerPaid').value) || 0;
+            const paymentMethod = document.getElementById('paymentMethodSelect').value;
             
-            fetch('/giaodich', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    customerId: customerId,
-                    items: cart
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = `/giaodich/${data.transactionId}`;
+            if (paymentMethod === 'TIEN_MAT' && customerPaid < totalAmount) {
+                showToast('Số tiền khách đưa không đủ!', 'error');
+                return;
+            }
+            
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/giaodich/add';
+            
+            // Add first product (simplified for demo)
+            if (cart.length > 0) {
+                const firstProduct = cart[0];
+                
+                const maSanPhamInput = document.createElement('input');
+                maSanPhamInput.type = 'hidden';
+                maSanPhamInput.name = 'maSanPham';
+                maSanPhamInput.value = 'BK001'; // Simplified - get from product data
+                
+                const soLuongInput = document.createElement('input');
+                soLuongInput.type = 'hidden';
+                soLuongInput.name = 'soLuong';
+                soLuongInput.value = firstProduct.quantity;
+                
+                const nhanVienInput = document.createElement('input');
+                nhanVienInput.type = 'hidden';
+                nhanVienInput.name = 'maNhanVien';
+                nhanVienInput.value = document.getElementById('nhanVienSelect').value;
+                
+                const paymentInput = document.createElement('input');
+                paymentInput.type = 'hidden';
+                paymentInput.name = 'phuongThucThanhToan';
+                paymentInput.value = paymentMethod;
+                
+                if (selectedCustomer) {
+                    const customerInput = document.createElement('input');
+                    customerInput.type = 'hidden';
+                    customerInput.name = 'maKhachHang';
+                    customerInput.value = 'KH001'; // Simplified
+                    form.appendChild(customerInput);
+                }
+                
+                if (customerPaid > 0) {
+                    const paidInput = document.createElement('input');
+                    paidInput.type = 'hidden';
+                    paidInput.name = 'tienKhachDua';
+                    paidInput.value = customerPaid;
+                    form.appendChild(paidInput);
+                }
+                
+                form.appendChild(maSanPhamInput);
+                form.appendChild(soLuongInput);
+                form.appendChild(nhanVienInput);
+                form.appendChild(paymentInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function showToast(message, type) {
+            // Simple toast notification
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.zIndex = '9999';
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 3000);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('customerPaid').addEventListener('input', calculateChange);
+            document.getElementById('nhanVienSelect').addEventListener('change', updateCreateButton);
+            document.getElementById('paymentMethodSelect').addEventListener('change', function() {
+                const paymentMethod = this.value;
+                const cashSection = document.getElementById('cashPaymentSection');
+                
+                if (paymentMethod === 'TIEN_MAT') {
+                    cashSection.style.display = 'block';
                 } else {
-                    alert('Thanh toán thất bại: ' + data.message);
+                    cashSection.style.display = 'none';
+                    document.getElementById('customerPaid').value = totalAmount;
+                    calculateChange();
+                }
+                
+                updateCreateButton();
+            });
+            
+            document.getElementById('productSearch').addEventListener('input', function() {
+                if (this.value === '') {
+                    filterByCategory('all');
                 }
             });
+            
+            document.getElementById('customerSearch').addEventListener('input', searchCustomer);
         });
     </script>
+
+    <style>
+        .product-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .quantity-input {
+            border: 1px solid var(--mint);
+        }
+        
+        .quantity-input:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 0.2rem rgba(248, 187, 208, 0.25);
+        }
+        
+        .selected-customer {
+            border: 2px solid var(--mint);
+        }
+        
+        .list-group-item:hover {
+            background-color: var(--light-pink);
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+        }
+        
+        .card-header {
+            border-bottom: 2px solid var(--mint);
+        }
+        
+        #cartItems {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .btn-outline-primary.active {
+            background-color: var(--pink);
+            border-color: var(--pink);
+            color: white;
+        }
+        
+        .text-primary {
+            color: var(--pink) !important;
+        }
+    </style>
 </body>
 </html>

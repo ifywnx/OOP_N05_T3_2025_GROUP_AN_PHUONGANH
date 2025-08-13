@@ -39,13 +39,21 @@ public class KhachHangController {
             model.addAttribute("khachHangs", khachHangService.getAllKhachHang());
         }
 
-        // Analytics data
+        // Analytics data - với null safety
         model.addAttribute("customerTypes", KhachHang.LoaiKhachHang.values());
-        model.addAttribute("vipCount", khachHangService.getVipCustomersCount());
-        model.addAttribute("premiumCount", khachHangService.getPremiumCustomersCount());
+        
+        Long vipCount = khachHangService.getVipCustomersCount();
+        model.addAttribute("vipCount", vipCount != null ? vipCount : 0);
+        
+        Long premiumCount = khachHangService.getPremiumCustomersCount();
+        model.addAttribute("premiumCount", premiumCount != null ? premiumCount : 0);
+        
         model.addAttribute("topCustomers", khachHangService.getTopCustomersBySpending());
         model.addAttribute("birthdayCustomers", khachHangService.getCustomersWithBirthdayToday());
-        model.addAttribute("totalSpending", khachHangService.getTotalCustomerSpending());
+        
+        Double totalSpending = khachHangService.getTotalCustomerSpending();
+        model.addAttribute("totalSpending", totalSpending != null ? totalSpending : 0.0);
+        
         model.addAttribute("pageTitle", "Quản Lý Khách Hàng");
 
         return "khachhang/list";
@@ -55,8 +63,9 @@ public class KhachHangController {
     public String addKhachHangForm(Model model) {
         model.addAttribute("khachHang", new KhachHang());
         model.addAttribute("genders", KhachHang.GioiTinh.values());
+        model.addAttribute("isEdit", false);
         model.addAttribute("pageTitle", "Thêm Khách Hàng Mới");
-        return "khachhang/add";
+        return "khachhang/form";
     }
 
     @PostMapping("/add")
@@ -67,24 +76,27 @@ public class KhachHangController {
 
         if (result.hasErrors()) {
             model.addAttribute("genders", KhachHang.GioiTinh.values());
+            model.addAttribute("isEdit", false);
             model.addAttribute("pageTitle", "Thêm Khách Hàng Mới");
-            return "khachhang/add";
+            return "khachhang/form";
         }
 
         // Check if customer code already exists
         if (khachHangService.getKhachHangByMa(khachHang.getMaKhachHang()).isPresent()) {
             result.rejectValue("maKhachHang", "error.khachHang", "Mã khách hàng đã tồn tại");
             model.addAttribute("genders", KhachHang.GioiTinh.values());
+            model.addAttribute("isEdit", false);
             model.addAttribute("pageTitle", "Thêm Khách Hàng Mới");
-            return "khachhang/add";
+            return "khachhang/form";
         }
 
         // Check if phone number already exists
         if (khachHangService.getKhachHangBySoDienThoai(khachHang.getSoDienThoai()).isPresent()) {
             result.rejectValue("soDienThoai", "error.khachHang", "Số điện thoại đã tồn tại");
             model.addAttribute("genders", KhachHang.GioiTinh.values());
+            model.addAttribute("isEdit", false);
             model.addAttribute("pageTitle", "Thêm Khách Hàng Mới");
-            return "khachhang/add";
+            return "khachhang/form";
         }
 
         try {
@@ -108,8 +120,9 @@ public class KhachHangController {
 
         model.addAttribute("khachHang", khachHangOpt.get());
         model.addAttribute("genders", KhachHang.GioiTinh.values());
+        model.addAttribute("isEdit", true);
         model.addAttribute("pageTitle", "Chỉnh Sửa Khách Hàng");
-        return "khachhang/edit";
+        return "khachhang/form";
     }
 
     @PostMapping("/edit/{id}")
@@ -121,8 +134,9 @@ public class KhachHangController {
 
         if (result.hasErrors()) {
             model.addAttribute("genders", KhachHang.GioiTinh.values());
+            model.addAttribute("isEdit", true);
             model.addAttribute("pageTitle", "Chỉnh Sửa Khách Hàng");
-            return "khachhang/edit";
+            return "khachhang/form";
         }
 
         try {
@@ -185,7 +199,7 @@ public class KhachHangController {
     // API endpoints for customer analytics
     @GetMapping("/api/loyalty-stats")
     @ResponseBody
-    @SuppressWarnings("unused") // ẩn cảnh báo các field của anonymous object không được dùng trực tiếp
+    @SuppressWarnings("unused")
     public Object getLoyaltyStatistics() {
         return new Object() {
             public final Long vipCount = khachHangService.getVipCustomersCount();

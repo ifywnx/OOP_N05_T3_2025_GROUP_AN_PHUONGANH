@@ -21,45 +21,55 @@ public class DashboardController {
     @GetMapping({"/", "/dashboard"})
     public String dashboard(Model model) {
         
-        // KPI Metrics
+        // KPI Metrics - Tổng quan hệ thống
         model.addAttribute("totalProducts", sanPhamService.getAllSanPham().size());
         model.addAttribute("totalCustomers", khachHangService.getAllKhachHang().size());
         model.addAttribute("totalEmployees", nhanVienService.getActiveEmployeeCount());
-        model.addAttribute("dailyRevenue", giaoDichService.getDailyRevenue(LocalDate.now()) != null ? 
-                          giaoDichService.getDailyRevenue(LocalDate.now()) : 0.0);
-        model.addAttribute("monthlyRevenue", giaoDichService.getMonthlyRevenue(LocalDate.now()) != null ? 
-                          giaoDichService.getMonthlyRevenue(LocalDate.now()) : 0.0);
-        model.addAttribute("dailyTransactions", giaoDichService.getDailyTransactionCount(LocalDate.now()));
+        
+        // Revenue metrics với null safety
+        Double dailyRev = giaoDichService.getDailyRevenue(LocalDate.now());
+        model.addAttribute("dailyRevenue", dailyRev != null ? dailyRev : 0.0);
+        
+        Double monthlyRev = giaoDichService.getMonthlyRevenue(LocalDate.now());
+        model.addAttribute("monthlyRevenue", monthlyRev != null ? monthlyRev : 0.0);
+        
+        Long dailyTrans = giaoDichService.getDailyTransactionCount(LocalDate.now());
+        model.addAttribute("dailyTransactions", dailyTrans != null ? dailyTrans : 0L);
 
-        // Product Analytics
+        // Product Analytics - Cảnh báo tồn kho
         model.addAttribute("lowStockProducts", sanPhamService.getSanPhamSapHetHang());
         model.addAttribute("outOfStockProducts", sanPhamService.getSanPhamHetHang());
         model.addAttribute("topSellingProducts", sanPhamService.getTopSellingProducts());
-        model.addAttribute("inventoryValue", sanPhamService.getTotalInventoryValue() != null ? 
-                          sanPhamService.getTotalInventoryValue() : 0.0);
+        
+        Double inventoryVal = sanPhamService.getTotalInventoryValue();
+        model.addAttribute("inventoryValue", inventoryVal != null ? inventoryVal : 0.0);
 
-        // Customer Analytics
+        // Customer Analytics - Sinh nhật & VIP
         model.addAttribute("vipCustomers", khachHangService.getVipCustomersCount());
         model.addAttribute("premiumCustomers", khachHangService.getPremiumCustomersCount());
         model.addAttribute("topCustomers", khachHangService.getTopCustomersBySpending());
         model.addAttribute("birthdayCustomers", khachHangService.getCustomersWithBirthdayToday());
-        model.addAttribute("totalCustomerSpending", khachHangService.getTotalCustomerSpending());
+        
+        Double totalSpending = khachHangService.getTotalCustomerSpending();
+        model.addAttribute("totalCustomerSpending", totalSpending != null ? totalSpending : 0.0);
 
-        // Employee Analytics
+        // Employee Analytics - Hiệu suất
         model.addAttribute("topPerformers", nhanVienService.getTopPerformers());
-        model.addAttribute("averageSalary", nhanVienService.getAverageSalary() != null ? 
-                          nhanVienService.getAverageSalary() : 0.0);
-        model.addAttribute("totalSalesRevenue", nhanVienService.getTotalSalesRevenue() != null ?
-                          nhanVienService.getTotalSalesRevenue() : 0.0);
+        
+        Double avgSalary = nhanVienService.getAverageSalary();
+        model.addAttribute("averageSalary", avgSalary != null ? avgSalary : 0.0);
+        
+        Double totalSalesRev = nhanVienService.getTotalSalesRevenue();
+        model.addAttribute("totalSalesRevenue", totalSalesRev != null ? totalSalesRev : 0.0);
 
-        // Recent Activity & Transaction Analytics
+        // Recent Activity & Transaction Analytics - Hoạt động gần đây
         model.addAttribute("recentTransactions", giaoDichService.getRecentTransactions());
         model.addAttribute("completedTransactions", giaoDichService.getCompletedTransactions());
-        model.addAttribute("averageTransactionValue", giaoDichService.getAverageTransactionValue() != null ?
-                          giaoDichService.getAverageTransactionValue() : 0.0);
+        
+        Double avgTransValue = giaoDichService.getAverageTransactionValue();
+        model.addAttribute("averageTransactionValue", avgTransValue != null ? avgTransValue : 0.0);
 
-        model.addAttribute("pageTitle", "Dashboard - Bakery Management");
+        model.addAttribute("pageTitle", "Dashboard - Tiệm Bánh Phenikaa");
         return "dashboard";
     }
 }
-
