@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <!-- Same head as product list.html -->
+    <!-- Phần head giống với nhân viên -->
     <title>Quản Lý Khách Hàng</title>
 </head>
 <body>
-    <!-- Navbar (giống sản phẩm) -->
-    
+    <!-- Navigation Bar (giống module Nhân viên) -->
+
     <div class="container-fluid mt-4">
         <!-- Page Header -->
-        <div class="page-header">
-            <h1><i class="fas fa-users me-3"></i>Quản Lý Khách Hàng</h1>
-            <p>Danh sách khách hàng và thông tin chi tiết</p>
-            <a href="/khachhang/add" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Thêm Khách Hàng
-            </a>
-        </div>
-
-        <!-- Search Box -->
-        <div class="search-controls">
-            <input type="text" placeholder="Tìm theo tên/SĐT..." class="search-input">
+        <div class="page-header mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-users me-3"></i>Quản Lý Khách Hàng</h1>
+                    <p class="mb-0">Danh sách khách hàng và thông tin chi tiết</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="/khachhang/add" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Thêm Khách Hàng
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Stats Cards -->
@@ -31,41 +32,138 @@
                     <p>Tổng Khách Hàng</p>
                 </div>
             </div>
-            <!-- Thống kê VIP/Thường -->
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-crown stat-icon vip"></i>
+                    <h3 th:text="${vipCustomers}">25</h3>
+                    <p>Khách VIP</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-coins stat-icon revenue"></i>
+                    <h3 th:text="${totalRevenue} + '₫'">50,000,000₫</h3>
+                    <p>Tổng chi tiêu</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-birthday-cake stat-icon new"></i>
+                    <h3 th:text="${newCustomersThisMonth}">12</h3>
+                    <p>Mới tháng này</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/khachhang}" method="get">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" name="search" class="form-control" 
+                                   placeholder="Tìm theo tên/SĐT..." th:value="${searchKeyword}">
+                        </div>
+                        <div class="col-md-3">
+                            <select name="customerType" class="form-select">
+                                <option value="">Tất cả loại KH</option>
+                                <option value="VIP" th:selected="${customerType == 'VIP'}">VIP</option>
+                                <option value="THUONG" th:selected="${customerType == 'THUONG'}">Thường</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="sort" class="form-select">
+                                <option value="spend_desc" th:selected="${sort == 'spend_desc'}">Chi tiêu (cao-thấp)</option>
+                                <option value="spend_asc" th:selected="${sort == 'spend_asc'}">Chi tiêu (thấp-cao)</option>
+                                <option value="newest" th:selected="${sort == 'newest'}">Mới nhất</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search me-2"></i>Lọc
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- Customer Table -->
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Mã KH</th>
-                    <th>Tên Khách Hàng</th>
-                    <th>SĐT</th>
-                    <th>Loại KH</th>
-                    <th>Tổng Chi Tiêu</th>
-                    <th>Hành Động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="khachHang : ${khachHangs}">
-                    <td th:text="${khachHang.maKhachHang}">KH001</td>
-                    <td>
-                        <img th:src="${khachHang.avatar}" width="40" class="rounded-circle me-2">
-                        <span th:text="${khachHang.hoTen}">Nguyễn Văn A</span>
-                    </td>
-                    <td th:text="${khachHang.soDienThoai}">0987654321</td>
-                    <td>
-                        <span class="badge bg-success" th:text="${khachHang.loaiKhachHang}">VIP</span>
-                    </td>
-                    <td th:text="${#numbers.formatDecimal(khachHang.tongChiTieu, 0, 'COMMA', 0, 'POINT')} + '₫'">5,000,000₫</td>
-                    <td>
-                        <a th:href="@{/khachhang/edit/{id}(id=${khachHang.id})}" class="btn btn-sm btn-primary">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã KH</th>
+                        <th>Khách Hàng</th>
+                        <th>Liên hệ</th>
+                        <th>Loại</th>
+                        <th>Chi tiêu</th>
+                        <th>Điểm</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="kh : ${khachHangs}">
+                        <td th:text="${kh.maKhachHang}">KH001</td>
+                        <td>
+                            <img th:src="${kh.anhDaiDien} ?: 'https://i.pravatar.cc/150'" 
+                                 width="40" class="rounded-circle me-2">
+                            <span th:text="${kh.hoTen}">Nguyễn Văn A</span>
+                        </td>
+                        <td>
+                            <div th:text="${kh.soDienThoai}">0987654321</div>
+                            <small class="text-muted" th:text="${kh.email} ?: 'Chưa có email'"></small>
+                        </td>
+                        <td>
+                            <span class="badge" 
+                                  th:class="${kh.loaiKhachHang == 'VIP'} ? 'bg-warning' : 'bg-secondary'"
+                                  th:text="${kh.loaiKhachHang}">VIP</span>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(kh.tongChiTieu, 0, 'COMMA', 0, 'POINT')} + '₫'">5,000,000₫</td>
+                        <td>
+                            <span class="badge bg-success" th:text="${kh.diemTichLuy}">500</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/khachhang/edit/{id}(id=${kh.id})}" 
+                               class="btn btn-sm btn-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger" 
+                                    th:onclick="'confirmDelete(' + ${kh.id} + ')'">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${khachHangs.empty}" class="text-center py-5">
+            <i class="fas fa-users fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">Không tìm thấy khách hàng nào</h4>
+            <a href="/khachhang/add" class="btn btn-primary mt-3">
+                <i class="fas fa-plus me-2"></i>Thêm Khách Hàng Đầu Tiên
+            </a>
+        </div>
     </div>
+
+    <!-- Delete Confirmation Modal (giống module Nhân viên) -->
+    <script>
+        function confirmDelete(id) {
+            if (confirm('Bạn chắc chắn muốn xóa khách hàng này?')) {
+                fetch(`/khachhang/${id}`, {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Không thể xóa khách hàng đã có giao dịch!');
+                    }
+                });
+            }
+        }
+    </script>
 </body>
 </html>
