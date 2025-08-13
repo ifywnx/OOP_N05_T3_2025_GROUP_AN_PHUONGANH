@@ -1,3 +1,5 @@
+package com.example.servingwebcontent.service;
+
 import com.example.servingwebcontent.model.GiaoDich;
 import com.example.servingwebcontent.model.SanPham;
 import com.example.servingwebcontent.model.KhachHang;

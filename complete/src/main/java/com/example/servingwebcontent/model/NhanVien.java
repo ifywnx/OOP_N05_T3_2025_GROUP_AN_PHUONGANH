@@ -121,7 +121,7 @@ public class NhanVien {
 
     public enum ChucVu {
         GIAM_DOC("Giám Đốc", "🎯", 10),
-        TRUONG_PHONG("Trưởng Phòng", "👨‍💼", 😎,
+        TRUONG_PHONG("Trưởng Phòng", "👨‍💼", 8),
         PHO_PHONG("Phó Phòng", "👩‍💼", 6),
         NHAN_VIEN_CHINH("Nhân Viên Chính", "⭐", 4),
         NHAN_VIEN("Nhân Viên", "👤", 2),

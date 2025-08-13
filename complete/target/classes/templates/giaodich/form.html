@@ -1,100 +1,272 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8"><title>💾 Tạo Giao dịch</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
+    <!-- Phần head giống với nhân viên -->
+    <title>Tạo Giao Dịch Mới</title>
+    <style>
+        .product-item {
+            border-bottom: 1px dashed #eee;
+            padding: 10px 0;
+        }
+        .cart-summary {
+            background: var(--bakery-light-pink);
+            border-radius: 10px;
+        }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container mt-4">
-  <h2>💾 Tạo Giao dịch</h2>
+<body>
+    <!-- Navigation Bar (giống module Nhân viên) -->
 
-  <div th:if="${lineItemError}" class="alert alert-danger" th:text="${lineItemError}"></div>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Left Column - Product Selection -->
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="fas fa-birthday-cake me-2"></i>Chọn Sản Phẩm</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Product Search -->
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Tìm sản phẩm..." id="productSearch">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
 
-  <form th:action="@{/giaodich/save}" th:object="${giaoDich}" method="post" class="card p-4">
-    <div class="row g-3">
-      <div class="col-md-4">
-        <label class="form-label">Mã giao dịch</label>
-        <input class="form-control" th:field="*{maGiaoDich}">
-        <div class="text-danger small" th:errors="*{maGiaoDich}"></div>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Ngày giao dịch</label>
-        <input type="date" class="form-control" th:field="*{ngayGiaoDich}">
-        <div class="text-danger small" th:errors="*{ngayGiaoDich}"></div>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Giờ giao dịch</label>
-        <input type="time" class="form-control" th:field="*{gioGiaoDich}">
-        <div class="text-danger small" th:errors="*{gioGiaoDich}"></div>
-      </div>
+                        <!-- Product List -->
+                        <div class="row" id="productList">
+                            <div class="col-md-4 mb-3" th:each="sp : ${sanPhams}">
+                                <div class="card product-card">
+                                    <img th:src="${sp.anhDaiDien}" class="card-img-top">
+                                    <div class="card-body">
+                                        <h6 th:text="${sp.tenSanPham}">Bánh kem</h6>
+                                        <p class="text-primary fw-bold" 
+                                           th:text="${#numbers.formatDecimal(sp.giaBan, 0, 'COMMA', 0, 'POINT')} + '₫'">
+                                            180,000₫
+                                        </p>
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-sm btn-outline-secondary" 
+                                                    onclick="adjustQuantity(this, -1)">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <input type="number" value="1" min="1" 
+                                                   class="form-control form-control-sm mx-2 text-center" 
+                                                   style="width: 50px;">
+                                            <button class="btn btn-sm btn-outline-secondary" 
+                                                    onclick="adjustQuantity(this, 1)">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-primary ms-auto" 
+                                                    th:onclick="'addToCart(' + ${sp.id} + ', this)'">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Cart & Customer -->
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="fas fa-user me-2"></i>Thông Tin Khách Hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Tìm khách hàng..." id="customerSearch">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Selected Customer -->
+                        <div class="selected-customer p-3 mb-3" th:if="${khachHang}" style="background: #f8f9fa; border-radius: 8px;">
+                            <div class="d-flex align-items-center">
+                                <img th:src="${khachHang.anhDaiDien}" width="50" class="rounded-circle me-3">
+                                <div>
+                                    <h6 class="mb-1" th:text="${khachHang.hoTen}">Nguyễn Văn A</h6>
+                                    <p class="mb-1 text-muted" th:text="${khachHang.soDienThoai}">0987654321</p>
+                                    <span class="badge bg-warning" th:text="${khachHang.loaiKhachHang}">VIP</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- New Customer Button -->
+                        <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#newCustomerModal">
+                            <i class="fas fa-plus me-2"></i>Thêm khách hàng mới
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Giỏ Hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="cartItems">
+                            <!-- Cart items will be added here dynamically -->
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                                <p>Giỏ hàng trống</p>
+                            </div>
+                        </div>
+                        
+                        <div class="cart-summary p-3 mt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tạm tính:</span>
+                                <span id="subtotal">0₫</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Giảm giá:</span>
+                                <span id="discount">0₫</span>
+                            </div>
+                            <div class="d-flex justify-content-between fw-bold fs-5">
+                                <span>Tổng cộng:</span>
+                                <span id="total">0₫</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary w-100 mt-3" id="checkoutBtn">
+                            <i class="fas fa-credit-card me-2"></i>Xác Nhận Thanh Toán
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <hr class="my-4">
-
-    <div class="mb-2">
-      <label class="form-label me-3">Chính sách giảm giá:</label>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="policy" value="NONE" checked>
-        <label class="form-check-label">Không giảm</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="policy" value="VIP">
-        <label class="form-check-label">VIP (-10%)</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="policy" value="SEASONAL">
-        <label class="form-check-label">Seasonal (-15%)</label>
-      </div>
+    <!-- New Customer Modal -->
+    <div class="modal fade" id="newCustomerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm Khách Hàng Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Simple Customer Form -->
+                    <div class="mb-3">
+                        <label class="form-label">Họ tên</label>
+                        <input type="text" class="form-control" id="newCustomerName">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="newCustomerPhone">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewCustomer()">Lưu</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <h5 class="m-0">Dòng hàng</h5>
-      <button type="button" class="btn btn-outline-secondary btn-sm" id="btnAddLine">+ Thêm dòng</button>
-    </div>
-
-    <div class="table-responsive">
-      <table class="table align-middle">
-        <thead>
-        <tr><th style="width:45%">Sản phẩm</th><th style="width:20%">Số lượng</th><th style="width:20%">Đơn giá</th><th style="width:15%"></th></tr>
-        </thead>
-        <tbody id="lineItems">
-        <tr class="line">
-          <td>
-            <select name="sanPhamIds" class="form-select" required>
-              <option value="" disabled selected>— Chọn sản phẩm —</option>
-              <option th:each="sp : ${dsSanPham}" th:value="${sp.id}" th:text="${sp.tenSanPham}">Sản phẩm</option>
-            </select>
-          </td>
-          <td><input type="number" name="soLuongs" class="form-control" min="1" value="1" required></td>
-          <td><input type="number" name="donGias" class="form-control" min="0" step="1000" value="0" required></td>
-          <td><button type="button" class="btn btn-outline-danger btn-sm btnRemove">Xóa</button></td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mt-3 d-flex gap-2">
-      <button type="submit" class="btn btn-primary">Lưu giao dịch</button>
-      <a th:href="@{/giaodich}" class="btn btn-secondary">⬅ Quay lại</a>
-    </div>
-  </form>
-</div>
-
-<script>
-const lineItems = document.getElementById('lineItems');
-document.getElementById('btnAddLine').addEventListener('click', () => {
-  const row = lineItems.querySelector('.line').cloneNode(true);
-  row.querySelectorAll('input').forEach(i => i.value = i.name==='soLuongs' ? 1 : 0);
-  row.querySelector('select').selectedIndex = 0;
-  lineItems.appendChild(row);
-});
-lineItems.addEventListener('click', (e) => {
-  if(e.target.classList.contains('btnRemove')){
-    const rows = lineItems.querySelectorAll('.line');
-    if(rows.length > 1) e.target.closest('.line').remove();
-  }
-});
-</script>
+    <script>
+        let cart = [];
+        
+        // Thêm sản phẩm vào giỏ
+        function addToCart(productId, button) {
+            const card = button.closest('.product-card');
+            const quantity = parseInt(card.querySelector('input').value);
+            const product = {
+                id: productId,
+                name: card.querySelector('h6').textContent,
+                price: parseFloat(card.querySelector('p').textContent.replace(/[^\d]/g, '')),
+                quantity: quantity
+            };
+            
+            // Kiểm tra nếu sản phẩm đã có trong giỏ
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push(product);
+            }
+            
+            updateCart();
+            showToast('Đã thêm vào giỏ hàng!', 'success');
+        }
+        
+        // Cập nhật giỏ hàng
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discount = 0; // Có thể thêm logic giảm giá sau
+            const total = subtotal - discount;
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                        <p>Giỏ hàng trống</p>
+                    </div>
+                `;
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="product-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="mb-1">${item.name}</h6>
+                                <small class="text-muted">${item.price.toLocaleString()}₫ x ${item.quantity}</small>
+                            </div>
+                            <div class="text-end">
+                                <h6 class="mb-1">${(item.price * item.quantity).toLocaleString()}₫</h6>
+                                <button class="btn btn-sm btn-outline-danger" 
+                                        onclick="removeFromCart(${item.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('subtotal').textContent = subtotal.toLocaleString() + '₫';
+            document.getElementById('discount').textContent = discount.toLocaleString() + '₫';
+            document.getElementById('total').textContent = total.toLocaleString() + '₫';
+        }
+        
+        // Xóa sản phẩm khỏi giỏ
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+        
+        // Thanh toán
+        document.getElementById('checkoutBtn').addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert('Giỏ hàng trống!');
+                return;
+            }
+            
+            const customerId = 1; // Lấy từ form khách hàng
+            
+            fetch('/giaodich', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customerId: customerId,
+                    items: cart
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = `/giaodich/${data.transactionId}`;
+                } else {
+                    alert('Thanh toán thất bại: ' + data.message);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

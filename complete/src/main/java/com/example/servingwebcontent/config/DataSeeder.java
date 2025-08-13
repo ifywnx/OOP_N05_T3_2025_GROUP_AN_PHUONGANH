@@ -184,7 +184,7 @@ public class DataSeeder implements CommandLineRunner {
             new Object[]{"KH002", "Trần Thị Hoa", LocalDate.of(1990, 7, 22), KhachHang.GioiTinh.NU, "0987654321", "hoa.tran@email.com", "456 Phố Huế, Hai Bà Trưng, Hà Nội", "Hai Bà Trưng", 2800000.0, 8, "Macaron"},
             new Object[]{"KH003", "Lê Đức Thành", LocalDate.of(1988, 12, 3), KhachHang.GioiTinh.NAM, "0912345678", "thanh.le@email.com", "789 Nguyễn Trãi, Thanh Xuân, Hà Nội", "Thanh Xuân", 1650000.0, 5, "Croissant"},
             new Object[]{"KH004", "Phạm Thị Lan", LocalDate.of(1992, 5, 18), KhachHang.GioiTinh.NU, "0923456789", "lan.pham@email.com", "321 Giải Phóng, Hoàng Mai, Hà Nội", "Hoàng Mai", 4750000.0, 10, "Tiramisu"},
-            new Object[]{"KH005", "Hoàng Văn Đức", LocalDate.of(1987, 9, 😎, KhachHang.GioiTinh.NAM, "0934567890", "duc.hoang@email.com", "654 Tô Hiệu, Cầu Giấy, Hà Nội", "Cầu Giấy", 920000.0, 3, "Bánh mì"}
+            new Object[]{"KH005", "Hoàng Văn Đức", LocalDate.of(1987, 9, 8), KhachHang.GioiTinh.NAM, "0934567890", "duc.hoang@email.com", "654 Tô Hiệu, Cầu Giấy, Hà Nội", "Cầu Giấy", 920000.0, 3, "Bánh mì"}
         );
 
         for (Object[] data : customerData) {
@@ -219,7 +219,7 @@ public class DataSeeder implements CommandLineRunner {
         
         List<Object[]> employeeData = Arrays.asList(
             new Object[]{"NV001", "Nguyễn Thị Quỳnh", LocalDate.of(1985, 5, 20), NhanVien.GioiTinh.NU, "0901111111", "quynh.manager@bakery.com", "Hà Nội", NhanVien.PhongBan.QUAN_LY, NhanVien.ChucVu.GIAM_DOC, LocalDate.of(2020, 1, 15), 25000000.0, 75000000.0, 22},
-            new Object[]{"NV002", "Trần Văn Hải", LocalDate.of(1990, 3, 😎, NhanVien.GioiTinh.NAM, "0902222222", "hai.sales@bakery.com", "Hà Nội", NhanVien.PhongBan.BAN_HANG, NhanVien.ChucVu.TRUONG_PHONG, LocalDate.of(2021, 6, 1), 15000000.0, 35000000.0, 20},
+            new Object[]{"NV002", "Trần Văn Hải", LocalDate.of(1990, 3, 8), NhanVien.GioiTinh.NAM, "0902222222", "hai.sales@bakery.com", "Hà Nội", NhanVien.PhongBan.BAN_HANG, NhanVien.ChucVu.TRUONG_PHONG, LocalDate.of(2021, 6, 1), 15000000.0, 35000000.0, 20},
             new Object[]{"NV003", "Lê Thị Hương", LocalDate.of(1992, 8, 12), NhanVien.GioiTinh.NU, "0903333333", "huong.sales@bakery.com", "Hà Nội", NhanVien.PhongBan.BAN_HANG, NhanVien.ChucVu.NHAN_VIEN_CHINH, LocalDate.of(2022, 3, 10), 12000000.0, 28000000.0, 21}
         );
 
@@ -278,7 +278,7 @@ public class DataSeeder implements CommandLineRunner {
             
             giaoDich.tinhToanGiaoDich();
             
-            if (i <= 😎 {
+            if (i <= 8) {
                 giaoDich.setTrangThai(GiaoDich.TrangThaiGiaoDich.HOAN_THANH);
                 giaoDich.setThoiGianHoanThanh(LocalDateTime.now().minusDays(random.nextInt(7)));
                 giaoDich.hoanThanhGiaoDich();
@@ -342,4 +342,3 @@ public class DataSeeder implements CommandLineRunner {
         System.out.println("=".repeat(80) + "\n");
     }
 }
-localhost

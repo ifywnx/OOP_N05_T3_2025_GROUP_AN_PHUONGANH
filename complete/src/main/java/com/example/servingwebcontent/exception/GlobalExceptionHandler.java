@@ -126,20 +126,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 🔐 Xử lý Access Denied Exception
-     */
-    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ModelAndView handleAccessDeniedException(org.springframework.security.access.AccessDeniedException ex, HttpServletRequest request) {
-        logger.warn("🔐 Access Denied Exception: {} - URL: {}", ex.getMessage(), request.getRequestURL());
-        
-        ModelAndView mav = new ModelAndView("error/403");
-        mav.addObject("errorMessage", "Bạn không có quyền truy cập tài nguyên này");
-        mav.addObject("pageTitle", "Từ Chối Truy Cập - 403");
-        return mav;
-    }
-
-    /**
      * ⚠️ Xử lý IllegalArgumentException
      */
     @ExceptionHandler(IllegalArgumentException.class)
