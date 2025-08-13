@@ -1,54 +1,551 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8"><title>💾 Sản phẩm - Form</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'Thêm Sản Phẩm'">Thêm Sản Phẩm</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom Bakery Theme CSS -->
+    <style>
+        :root {
+            --bakery-pink: #F8BBD0;
+            --bakery-cream: #FFF3E0;
+            --bakery-mint: #C8E6C9;
+            --bakery-light-pink: #FCE4EC;
+            --bakery-warm-cream: #FFF8E1;
+            --bakery-sage: #A5D6A7;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bakery-cream) 0%, var(--bakery-light-pink) 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--bakery-pink) 0%, #E1BEE7 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .form-container {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--bakery-mint);
+        }
+
+        .form-header h2 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label i {
+            margin-right: 0.5rem;
+            color: var(--bakery-pink);
+        }
+
+        .form-control, .form-select {
+            border: 2px solid var(--bakery-mint);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--bakery-pink);
+            box-shadow: 0 0 0 0.2rem rgba(248, 187, 208, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--bakery-pink), #E1BEE7);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #E1BEE7, var(--bakery-pink));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+        }
+
+        .preview-card {
+            background: linear-gradient(135deg, var(--bakery-cream), var(--bakery-warm-cream));
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border: 2px dashed var(--bakery-mint);
+        }
+
+        .preview-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 3px solid var(--bakery-mint);
+        }
+
+        .calculation-display {
+            background: var(--bakery-light-pink);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .calculation-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .calculation-item:last-child {
+            margin-bottom: 0;
+            font-weight: 700;
+            color: #E91E63;
+            border-top: 1px solid var(--bakery-mint);
+            padding-top: 0.5rem;
+        }
+
+        .error-message {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            color: #c62828;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            color: #2e7d32;
+        }
+
+        .required {
+            color: #f44336;
+        }
+
+        .auto-generate-btn {
+            background: linear-gradient(135deg, var(--bakery-mint), var(--bakery-sage));
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: #333;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .preview-image {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container mt-4">
-  <h2>💾 Lưu Sản phẩm</h2>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-birthday-cake me-2"></i>Tiệm Bánh Phenikaa
+            </a>
+            
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
+                <a class="nav-link active" href="/sanpham">
+                    <i class="fas fa-birthday-cake me-1"></i> Sản Phẩm
+                </a>
+                <a class="nav-link" href="/khachhang">
+                    <i class="fas fa-users me-1"></i> Khách Hàng
+                </a>
+                <a class="nav-link" href="/nhanvien">
+                    <i class="fas fa-user-tie me-1"></i> Nhân Viên
+                </a>
+                <a class="nav-link" href="/giaodich">
+                    <i class="fas fa-receipt me-1"></i> Giao Dịch
+                </a>
+            </div>
+        </div>
+    </nav>
 
-  <form th:action="@{/sanpham/save}" th:object="${sanPham}" method="post" class="card p-4">
-    <input type="hidden" th:field="*{id}">
-    <div class="row g-3">
-      <div class="col-md-6">
-        <label class="form-label">Mã sản phẩm</label>
-        <input class="form-control" th:field="*{maSanPham}">
-        <div class="text-danger small" th:errors="*{maSanPham}"></div>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Tên sản phẩm</label>
-        <input class="form-control" th:field="*{tenSanPham}">
-        <div class="text-danger small" th:errors="*{tenSanPham}"></div>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Số lượng</label>
-        <input type="number" class="form-control" min="0" th:field="*{soLuong}">
-        <div class="text-danger small" th:errors="*{soLuong}"></div>
-      </div>
-      <div class="col-md-5">
-        <label class="form-label">Nhà sản xuất</label>
-        <input class="form-control" th:field="*{nhaSanXuat}">
-        <div class="text-danger small" th:errors="*{nhaSanXuat}"></div>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Hạn sử dụng</label>
-        <input type="date" class="form-control" th:field="*{hanSuDung}">
-        <div class="text-danger small" th:errors="*{hanSuDung}"></div>
-      </div>
-      <div class="col-12">
-        <label class="form-label">Nguyên liệu</label>
-        <textarea rows="3" class="form-control" th:field="*{nguyenLieu}"></textarea>
-        <div class="text-danger small" th:errors="*{nguyenLieu}"></div>
-      </div>
+    <!-- Main Content -->
+    <div class="container">
+        <div class="form-container">
+            <!-- Form Header -->
+            <div class="form-header">
+                <h2 th:if="${isEdit}">
+                    <i class="fas fa-edit text-primary me-2"></i>
+                    Chỉnh Sửa Sản Phẩm
+                </h2>
+                <h2 th:unless="${isEdit}">
+                    <i class="fas fa-plus text-primary me-2"></i>
+                    Thêm Sản Phẩm Mới
+                </h2>
+                <p>Điền thông tin chi tiết để tạo/cập nhật sản phẩm trong hệ thống</p>
+            </div>
+
+            <!-- Error Messages -->
+            <div th:if="${error}" class="error-message">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${error}">Có lỗi xảy ra</span>
+            </div>
+
+            <!-- Success Messages -->
+            <div th:if="${success}" class="success-message">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}">Thành công</span>
+            </div>
+
+            <!-- Product Form -->
+            <form th:action="${isEdit ? '/sanpham/' + sanPham.id : '/sanpham'}" method="post" th:object="${sanPham}">
+                <div class="row">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <!-- Mã Sản Phẩm -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-barcode"></i>
+                                Mã Sản Phẩm <span class="required">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="text" th:field="*{maSanPham}" class="form-control" 
+                                       placeholder="VD: BK001" required>
+                                <button type="button" class="auto-generate-btn" onclick="generateProductCode()">
+                                    <i class="fas fa-magic me-1"></i>Tự Động
+                                </button>
+                            </div>
+                            <small class="text-muted">Format: 2 chữ cái + 3-6 số (VD: BK001)</small>
+                        </div>
+
+                        <!-- Tên Sản Phẩm -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-tag"></i>
+                                Tên Sản Phẩm <span class="required">*</span>
+                            </label>
+                            <input type="text" th:field="*{tenSanPham}" class="form-control" 
+                                   placeholder="VD: Bánh Kem Tiramisu Đặc Biệt" required
+                                   oninput="updatePreview()">
+                        </div>
+
+                        <!-- Danh Mục -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-layer-group"></i>
+                                Danh Mục <span class="required">*</span>
+                            </label>
+                            <select th:field="*{danhMuc}" class="form-select" required onchange="updatePreview(); generateProductCode();">
+                                <option value="">Chọn danh mục</option>
+                                <option th:each="danhMuc : ${danhMucs}" 
+                                        th:value="${danhMuc}" 
+                                        th:text="${danhMuc.icon + ' ' + danhMuc.ten}"
+                                        th:selected="${danhMuc == sanPham.danhMuc}">
+                                    🎂 Bánh Kem
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Mô Tả -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-align-left"></i>
+                                Mô Tả Chi Tiết
+                            </label>
+                            <textarea th:field="*{moTa}" class="form-control" rows="4" 
+                                      placeholder="Mô tả chi tiết về sản phẩm, nguyên liệu, đặc điểm..."></textarea>
+                        </div>
+
+                        <!-- Nhà Sản Xuất -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-industry"></i>
+                                Nhà Sản Xuất
+                            </label>
+                            <input type="text" th:field="*{nhaSanXuat}" class="form-control" 
+                                   placeholder="VD: French Bakery">
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <!-- Giá Bán -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Giá Bán <span class="required">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="number" th:field="*{giaBan}" class="form-control" 
+                                       placeholder="180000" min="1000" max="10000000" required
+                                       oninput="calculateFinancials()">
+                                <span class="input-group-text">₫</span>
+                            </div>
+                        </div>
+
+                        <!-- Giá Vốn -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-coins"></i>
+                                Giá Vốn <span class="required">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="number" th:field="*{giaVon}" class="form-control" 
+                                       placeholder="120000" min="500" required
+                                       oninput="calculateFinancials()">
+                                <span class="input-group-text">₫</span>
+                            </div>
+                        </div>
+
+                        <!-- Số Lượng Tồn Kho -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-boxes"></i>
+                                Số Lượng Tồn Kho <span class="required">*</span>
+                            </label>
+                            <input type="number" th:field="*{soLuongTonKho}" class="form-control" 
+                                   placeholder="50" min="0" max="99999" required
+                                   oninput="calculateFinancials()">
+                        </div>
+
+                        <!-- Số Lượng Tối Thiểu -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Số Lượng Tối Thiểu
+                            </label>
+                            <input type="number" th:field="*{soLuongToiThieu}" class="form-control" 
+                                   placeholder="5" min="0" value="5">
+                            <small class="text-muted">Cảnh báo khi tồn kho xuống dưới mức này</small>
+                        </div>
+
+                        <!-- Hạn Sử Dụng -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-alt"></i>
+                                Hạn Sử Dụng
+                            </label>
+                            <input type="date" th:field="*{hanSuDung}" class="form-control" 
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                        </div>
+
+                        <!-- Financial Calculations -->
+                        <div class="calculation-display">
+                            <h6><i class="fas fa-calculator me-2"></i>Tính Toán Tự Động</h6>
+                            <div class="calculation-item">
+                                <span>Lợi nhuận/sản phẩm:</span>
+                                <span id="profitPerUnit">0₫</span>
+                            </div>
+                            <div class="calculation-item">
+                                <span>Tỷ lệ lợi nhuận:</span>
+                                <span id="profitMargin">0%</span>
+                            </div>
+                            <div class="calculation-item">
+                                <span>Giá trị tồn kho:</span>
+                                <span id="inventoryValue">0₫</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Preview -->
+                <div class="preview-card mt-4">
+                    <h6><i class="fas fa-eye me-2"></i>Xem Trước Sản Phẩm</h6>
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <img id="previewImage" src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=150&h=150&fit=crop" 
+                                 class="preview-image" alt="Preview">
+                        </div>
+                        <div class="col-md-9">
+                            <h5 id="previewName">Tên Sản Phẩm</h5>
+                            <p class="text-muted" id="previewCategory">🎂 Bánh Kem</p>
+                            <h4 class="text-primary" id="previewPrice">0₫</h4>
+                            <p id="previewDescription">Mô tả sản phẩm sẽ hiển thị ở đây...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="/sanpham" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Quay Lại
+                    </a>
+                    <div>
+                        <button type="button" class="btn btn-outline-info me-2" onclick="resetForm()">
+                            <i class="fas fa-undo me-2"></i>Làm Mới
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i th:class="${isEdit ? 'fas fa-save' : 'fas fa-plus'}" class="me-2"></i>
+                            <span th:text="${isEdit ? 'Cập Nhật' : 'Thêm Sản Phẩm'}">Thêm Sản Phẩm</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="mt-4 d-flex gap-2">
-      <button class="btn btn-primary" type="submit">💾 Lưu</button>
-      <a th:href="@{/sanpham}" class="btn btn-secondary">⬅ Quay lại</a>
-    </div>
-  </form>
-</div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Category to code prefix mapping
+        const categoryPrefixes = {
+            'BANH_KEM': 'BK',
+            'BANH_MI': 'BM',
+            'BANH_NGOT': 'BN',
+            'DO_UONG': 'DU',
+            'BANH_QUY': 'BQ'
+        };
+
+        // Category to image mapping
+        const categoryImages = {
+            'BANH_KEM': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=150&h=150&fit=crop',
+            'BANH_MI': 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=150&h=150&fit=crop',
+            'BANH_NGOT': 'https://images.unsplash.com/photo-1550617931-e17a7b70daa2?w=150&h=150&fit=crop',
+            'DO_UONG': 'https://images.unsplash.com/photo-1545665277-5937750b5a96?w=150&h=150&fit=crop',
+            'BANH_QUY': 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=150&h=150&fit=crop'
+        };
+
+        // Generate product code automatically
+        function generateProductCode() {
+            const categorySelect = document.querySelector('select[name="danhMuc"]');
+            const codeInput = document.querySelector('input[name="maSanPham"]');
+            
+            if (categorySelect.value) {
+                const prefix = categoryPrefixes[categorySelect.value];
+                const randomNum = String(Math.floor(Math.random() * 900) + 100).padStart(3, '0');
+                codeInput.value = prefix + randomNum;
+            }
+        }
+
+        // Calculate financial metrics
+        function calculateFinancials() {
+            const giaBan = parseFloat(document.querySelector('input[name="giaBan"]').value) || 0;
+            const giaVon = parseFloat(document.querySelector('input[name="giaVon"]').value) || 0;
+            const soLuong = parseFloat(document.querySelector('input[name="soLuongTonKho"]').value) || 0;
+
+            // Calculate profit per unit
+            const profitPerUnit = giaBan - giaVon;
+            document.getElementById('profitPerUnit').textContent = formatCurrency(profitPerUnit);
+
+            // Calculate profit margin
+            const profitMargin = giaVon > 0 ? ((profitPerUnit / giaVon) * 100) : 0;
+            document.getElementById('profitMargin').textContent = profitMargin.toFixed(1) + '%';
+
+            // Calculate inventory value
+            const inventoryValue = giaVon * soLuong;
+            document.getElementById('inventoryValue').textContent = formatCurrency(inventoryValue);
+
+            // Update preview price
+            document.getElementById('previewPrice').textContent = formatCurrency(giaBan);
+        }
+
+        // Update preview
+        function updatePreview() {
+            const name = document.querySelector('input[name="tenSanPham"]').value || 'Tên Sản Phẩm';
+            const category = document.querySelector('select[name="danhMuc"]');
+            const description = document.querySelector('textarea[name="moTa"]').value || 'Mô tả sản phẩm sẽ hiển thị ở đây...';
+
+            document.getElementById('previewName').textContent = name;
+            document.getElementById('previewDescription').textContent = description;
+
+            if (category.value) {
+                const selectedOption = category.selectedOptions[0];
+                document.getElementById('previewCategory').textContent = selectedOption.textContent;
+                
+                // Update preview image
+                const previewImage = document.getElementById('previewImage');
+                previewImage.src = categoryImages[category.value];
+            }
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            if (isNaN(amount)) return '0₫';
+            return amount.toLocaleString('vi-VN') + '₫';
+        }
+
+        // Reset form
+        function resetForm() {
+            if (confirm('Bạn có chắc muốn làm mới form? Dữ liệu đã nhập sẽ bị mất.')) {
+                document.querySelector('form').reset();
+                calculateFinancials();
+                updatePreview();
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateFinancials();
+            updatePreview();
+            
+            // Set default expiry date (7 days from now)
+            const expiryInput = document.querySelector('input[name="hanSuDung"]');
+            if (!expiryInput.value) {
+                const defaultDate = new Date();
+                defaultDate.setDate(defaultDate.getDate() + 7);
+                expiryInput.value = defaultDate.toISOString().split('T')[0];
+            }
+        });
+    </script>
 </body>
 </html>
