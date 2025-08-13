@@ -1,4 +1,4 @@
-package com.phenikaa.bakery.config;
+package com.example.servingwebcontent.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

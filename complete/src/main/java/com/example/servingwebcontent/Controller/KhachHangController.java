@@ -1,4 +1,4 @@
-package com.example.servingwebcontent.controller;
+package com.example.servingwebcontent.Controller;
 
 import com.example.servingwebcontent.model.KhachHang;
 import com.example.servingwebcontent.service.KhachHangService;
