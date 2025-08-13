@@ -1,48 +1,696 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8"><title>🧁 Danh sách Sản phẩm</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'Quản Lý Sản Phẩm'">Quản Lý Sản Phẩm</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom Bakery Theme CSS -->
+    <style>
+        :root {
+            --bakery-pink: #F8BBD0;
+            --bakery-cream: #FFF3E0;
+            --bakery-mint: #C8E6C9;
+            --bakery-light-pink: #FCE4EC;
+            --bakery-warm-cream: #FFF8E1;
+            --bakery-sage: #A5D6A7;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bakery-cream) 0%, var(--bakery-light-pink) 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--bakery-pink) 0%, #E1BEE7 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            transform: translateY(-1px);
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #fff 0%, var(--bakery-cream) 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #fff 0%, var(--bakery-warm-cream) 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon.total { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .stat-icon.in-stock { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        .stat-icon.low-stock { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .stat-icon.out-stock { background: linear-gradient(135deg, #F44336, #D32F2F); }
+
+        .product-card {
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--bakery-cream), var(--bakery-light-pink));
+        }
+
+        .product-category {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .status-con-hang { background: #4CAF50; }
+        .status-sap-het-hang { background: #FF9800; }
+        .status-het-hang { background: #F44336; }
+        .status-het-han { background: #9E9E9E; }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #E91E63;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-stock {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .quantity-btn {
+            background: var(--bakery-mint);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: var(--bakery-sage);
+            transform: scale(1.1);
+        }
+
+        .quantity-input {
+            border: 2px solid var(--bakery-mint);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin: 0 0.5rem;
+            width: 60px;
+        }
+
+        .add-to-cart-btn {
+            background: linear-gradient(135deg, var(--bakery-pink), #E1BEE7);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem;
+            color: #fff;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart-btn:hover {
+            background: linear-gradient(135deg, #E1BEE7, var(--bakery-pink));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #F44336, #D32F2F);
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-controls {
+            background: #fff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .search-input {
+            border: 2px solid var(--bakery-mint);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            border-color: var(--bakery-pink);
+            box-shadow: 0 0 0 0.2rem rgba(248, 187, 208, 0.25);
+        }
+
+        .filter-select {
+            border: 2px solid var(--bakery-mint);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+        }
+
+        .add-product-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            color: #fff;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .add-product-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Shopping Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: #fff;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cart-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #F44336;
+            color: #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .product-card {
+                margin-bottom: 1rem;
+            }
+            
+            .stats-card {
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container mt-4">
-  <h2 class="mb-3">🧁 Danh sách Sản phẩm</h2>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-birthday-cake me-2"></i>Tiệm Bánh Phenikaa
+            </a>
+            
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
+                <a class="nav-link active" href="/sanpham">
+                    <i class="fas fa-birthday-cake me-1"></i> Sản Phẩm
+                </a>
+                <a class="nav-link" href="/khachhang">
+                    <i class="fas fa-users me-1"></i> Khách Hàng
+                </a>
+                <a class="nav-link" href="/nhanvien">
+                    <i class="fas fa-user-tie me-1"></i> Nhân Viên
+                </a>
+                <a class="nav-link" href="/giaodich">
+                    <i class="fas fa-receipt me-1"></i> Giao Dịch
+                </a>
+            </div>
+            
+            <div class="navbar-nav">
+                <button class="nav-link btn" onclick="toggleCart()" style="position: relative;">
+                    <i class="fas fa-shopping-cart me-1"></i> Giỏ Hàng
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
 
-  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-2">
+                        <i class="fas fa-birthday-cake text-primary me-3"></i>
+                        Quản Lý Sản Phẩm
+                    </h1>
+                    <p class="text-muted mb-0">
+                        Quản lý kho hàng, giá cả và bán hàng trực tuyến với giao diện hiện đại.
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="/sanpham/add" class="add-product-btn">
+                        <i class="fas fa-plus me-2"></i>Thêm Sản Phẩm
+                    </a>
+                </div>
+            </div>
+        </div>
 
-  <a th:href="@{/sanpham/add}" class="btn btn-primary mb-3">➕ Thêm Sản phẩm</a>
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stat-icon total mx-auto">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <h3 class="mb-1" th:text="${#lists.size(sanPhams)} ?: '20'">20</h3>
+                    <p class="text-muted mb-0">Tổng Sản Phẩm</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stat-icon in-stock mx-auto">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="mb-1" th:text="${#lists.size(sanPhams)} - ${#lists.size(lowStockProducts)} - ${#lists.size(outOfStockProducts)}">18</h3>
+                    <p class="text-muted mb-0">Còn Hàng</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stat-icon low-stock mx-auto">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="mb-1" th:text="${#lists.size(lowStockProducts)} ?: '2'">2</h3>
+                    <p class="text-muted mb-0">Sắp Hết Hàng</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stat-icon out-stock mx-auto">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <h3 class="mb-1" th:text="${#lists.size(outOfStockProducts)} ?: '0'">0</h3>
+                    <p class="text-muted mb-0">Hết Hàng</p>
+                </div>
+            </div>
+        </div>
 
-  <div class="card p-2">
-    <div class="table-responsive">
-      <table class="table table-striped align-middle mb-0">
-        <thead class="table-dark">
-        <tr>
-          <th>#</th><th>Mã</th><th>Tên</th><th class="text-end">Tồn</th><th>NSX</th><th>HSD</th><th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="sp,i : ${dsSanPham}">
-          <td th:text="${i.count}">1</td>
-          <td th:text="${sp.maSanPham}">SP001</td>
-          <td th:text="${sp.tenSanPham}">Tên</td>
-          <td class="text-end" th:text="${sp.soLuong}">0</td>
-          <td th:text="${sp.nhaSanXuat}">NSX</td>
-          <td th:text="${sp.hanSuDung}">2025-12-31</td>
-          <td class="text-nowrap">
-            <a th:href="@{'/sanpham/edit/' + ${sp.id}}" class="btn btn-warning btn-sm">✏ Sửa</a>
-            <a th:href="@{'/sanpham/delete/' + ${sp.id}}" class="btn btn-danger btn-sm"
-               onclick="return confirm('Xóa sản phẩm này?')">🗑 Xóa</a>
-          </td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(dsSanPham)}">
-          <td colspan="7" class="text-center text-muted">Chưa có dữ liệu</td>
-        </tr>
-        </tbody>
-      </table>
+        <!-- Search & Filter Controls -->
+        <div class="search-controls">
+            <form method="get" action="/sanpham">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Tìm Kiếm</label>
+                        <input type="text" name="search" class="form-control search-input" 
+                               placeholder="Nhập tên sản phẩm..." th:value="${searchKeyword}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Danh Mục</label>
+                        <select name="category" class="form-select filter-select">
+                            <option value="">Tất Cả Danh Mục</option>
+                            <option th:each="cat : ${categories}" 
+                                    th:value="${cat.name()}" 
+                                    th:text="${cat.icon + ' ' + cat.ten}"
+                                    th:selected="${selectedCategory == cat.name()}">
+                                🎂 Bánh Kem
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Tìm Kiếm
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                            <i class="fas fa-times me-2"></i>Xóa Lọc
+                        </button>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-outline-info w-100" onclick="toggleView()">
+                            <i class="fas fa-th-large" id="viewToggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Alerts -->
+        <div th:if="${success}" class="alert alert-success" role="alert">
+            <i class="fas fa-check-circle me-2"></i><span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i><span th:text="${error}"></span>
+        </div>
+
+        <!-- Product Gallery -->
+        <div class="row" id="productGallery" th:if="${sanPhams != null and not #lists.isEmpty(sanPhams)}">
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4" th:each="sanPham : ${sanPhams}">
+                <div class="product-card">
+                    <div style="position: relative;">
+                        <img th:src="${sanPham.imageUrl}" 
+                             th:alt="${sanPham.tenSanPham}" 
+                             class="product-image"
+                             onerror="this.src='https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&h=200&fit=crop'">
+                        
+                        <div class="product-category" th:text="${sanPham.danhMuc.icon + ' ' + sanPham.danhMuc.ten}">
+                            🎂 Bánh Kem
+                        </div>
+                        
+                        <div class="product-status" 
+                             th:classappend="'status-' + ${#strings.toLowerCase(#strings.replace(sanPham.trangThai.name(), '_', '-'))}"
+                             th:text="${sanPham.trangThai.icon + ' ' + sanPham.trangThai.ten}">
+                            ✅ Còn Hàng
+                        </div>
+                    </div>
+                    
+                    <div class="product-info">
+                        <h5 class="product-name" th:text="${sanPham.tenSanPham}">Bánh Kem Tiramisu Đặc Biệt</h5>
+                        
+                        <div class="product-price" th:text="${#numbers.formatDecimal(sanPham.giaBan, 0, 'COMMA', 0, 'POINT')} + '₫'">
+                            180,000₫
+                        </div>
+                        
+                        <div class="product-stock">
+                            <i class="fas fa-box me-1"></i>
+                            Còn lại: <strong th:text="${sanPham.soLuongTonKho}">15</strong> |
+                            Đã bán: <strong th:text="${sanPham.soLuongDaBan}">5</strong>
+                        </div>
+                        
+                        <!-- Quantity Controls -->
+                        <div class="quantity-controls">
+                            <button type="button" class="quantity-btn" onclick="decreaseQuantity(this)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="form-control quantity-input" value="1" min="1" 
+                                   th:max="${sanPham.soLuongTonKho}">
+                            <button type="button" class="quantity-btn" onclick="increaseQuantity(this)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Add to Cart Button -->
+                        <button class="add-to-cart-btn" th:onclick="'addToCart(' + ${sanPham.id} + ')'"
+                                th:disabled="${sanPham.soLuongTonKho <= 0}">
+                            <i class="fas fa-cart-plus me-2"></i>
+                            <span th:text="${sanPham.soLuongTonKho > 0 ? 'Thêm Vào Giỏ' : 'Hết Hàng'}">Thêm Vào Giỏ</span>
+                        </button>
+                        
+                        <!-- Admin Action Buttons -->
+                        <div class="action-buttons">
+                            <a th:href="@{/sanpham/edit/{id}(id=${sanPham.id})}" class="btn-edit flex-fill text-center text-decoration-none">
+                                <i class="fas fa-edit me-1"></i>Sửa
+                            </a>
+                            <button class="btn-delete flex-fill" th:onclick="'confirmDelete(' + ${sanPham.id} + ')'">
+                                <i class="fas fa-trash me-1"></i>Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${sanPhams == null or #lists.isEmpty(sanPhams)}" class="text-center py-5">
+            <i class="fas fa-birthday-cake fa-5x text-muted mb-3"></i>
+            <h4 class="text-muted">Không tìm thấy sản phẩm nào</h4>
+            <p class="text-muted">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc.</p>
+            <a href="/sanpham/add" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Thêm Sản Phẩm Đầu Tiên
+            </a>
+        </div>
     </div>
-  </div>
-</div>
-</body>
-</html>
+
+    <!-- Shopping Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4><i class="fas fa-shopping-cart me-2"></i>Giỏ Hàng</h4>
+            <button class="btn btn-sm btn-outline-secondary" onclick="toggleCart()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div id="cartItems">
+            <!-- Cart items will be dynamically added here -->
+            <div class="text-center text-muted py-4">
+                <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                <p>Giỏ hàng trống</p>
+                <small>Thêm sản phẩm để bắt đầu mua hàng</small>
+            </div>
+        </div>
+        
+        <div class="border-top pt-3 mt-3">
+            <div class="d-flex justify-content-between mb-3">
+                <strong>Tổng Cộng:</strong>
+                <strong class="text-primary" id="cartTotal">0₫</strong>
+            </div>
+            <button class="btn btn-primary w-100 mb-2" onclick="checkout()">
+                <i class="fas fa-credit-card me-2"></i>Thanh Toán
+            </button>
+            <button class="btn btn-outline-danger w-100" onclick="clearCart()">
+                <i class="fas fa-trash me-2"></i>Xóa Giỏ Hàng
+            </button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        let cart = [];
+        let viewMode = 'grid';
+
+        // Quantity Controls
+        function increaseQuantity(btn) {
+            const input = btn.previousElementSibling;
+            const max = parseInt(input.getAttribute('max'));
+            const current = parseInt(input.value);
+            if (current < max) {
+                input.value = current + 1;
+            }
+        }
+
+        function decreaseQuantity(btn) {
+            const input = btn.nextElementSibling;
+            const current = parseInt(input.value);
+            if (current > 1) {
+                input.value = current - 1;
+            }
+        }
+
+        // Shopping Cart Functions
+        function addToCart(productId) {
+            const productCard = event.target.closest('.product-card');
+            const productName = productCard.querySelector('.product-name').textContent;
+            const productPrice = parseFloat(productCard.querySelector('.product-price').textContent.replace(/[₫,]/g, ''));
+            const quantity = parseInt(productCard.querySelector('.quantity-input').value);
+            
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: quantity
+                });
+            }
+            
+            updateCartDisplay();
+            showToast('Đã thêm vào giỏ hàng!', 'success');
+        }
+
+        function updateCartDisplay() {
+            const cartBadge = document.getElementById('cartBadge');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartBadge.textContent = totalItems;
+            cartBadge.style.display = totalItems > 0 ? 'flex' : 'none';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                        <p>Giỏ hàng trống</p>
+                        <small>Thêm sản phẩm để bắt đầu mua hàng</small>
+                    </div>
+                `;
+                cartTotal.textContent = '0₫';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                        <div>
+                            <div class="fw-bold">${item.name}</div>
+                            <small class="text-muted">${item.price.toLocaleString()}₫ x ${item.quantity}</small>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(${item.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                cartTotal.textContent = total.toLocaleString() + '₫';
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartDisplay();
+        }
+
+        function clearCart() {
+            cart = [];
+            updateCartDisplay();
+            showToast('Đã xóa giỏ hàng!', 'info');
+        }
+
